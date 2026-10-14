@@ -1,0 +1,13 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const root=new URL('../',import.meta.url);const read=p=>fs.readFileSync(new URL(p,root),'utf8');
+const sql=read('supabase/migrations/202610140001_core.sql');
+for(const table of ['tenants','tenant_members','company_access','companies','employees','examinations','sick_leaves','documents','migration_batches','audit_events'])assert.match(sql,new RegExp(`alter table public\\.${table} enable row level security;`));
+assert.doesNotMatch(sql,/using\s*\(\s*true\s*\)/i,'No public allow-all RLS');
+assert.doesNotMatch(sql.split('\n').filter(l=>!l.trim().startsWith('--')).join('\n'),/\b(egn|diagnosis)\s+(text|varchar|jsonb)\b/i,'No EGN/diagnosis columns');
+assert.match(sql,/revoke all on public\.tenants.* from anon/);
+assert.match(read('src/proxy.ts'),/Cache-Control.*private, no-store/);
+assert.match(read('src/app/login/actions.ts'),/signInWithPassword/);
+assert.doesNotMatch(read('src/app/api/export/route.ts'),/sick_leaves|examinations/);
+assert.match(read('src/app/preview/page.tsx'),/ДЕМО/);
+assert.match(read('.gitignore'),/\*\.xlsx/);
+console.log('STATIC AUDIT: 10/10 checks passed (not a substitute for DB/integration tests).');
