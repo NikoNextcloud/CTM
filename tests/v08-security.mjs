@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const ui=fs.readFileSync(new URL('../src/components/transfer-manager.tsx',import.meta.url),'utf8');
+const migration=fs.readFileSync(new URL('../supabase/migrations/202610150008_import_dedupe.sql',import.meta.url),'utf8');
+assert.match(ui,/read-excel-file\/browser/);
+assert.match(ui,/sheets\.length!==1/);
+assert.match(ui,/IMPORT_LIMIT_BYTES/);
+assert.match(ui,/previewNonClinicalImport/);
+assert.match(ui,/executeNonClinicalImport/);
+assert.match(migration,/m\.active and m\.role='employer'/);
+assert.match(migration,/employees_tenant_company_reference_unique/);
+console.log('v0.8 static XLSX and role guards passed');

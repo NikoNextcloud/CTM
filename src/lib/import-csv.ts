@@ -23,7 +23,7 @@ function validate(x:Record<string,string>,r:TransferResource,row:number,issues:I
   if(x.address.length>300||!['active','inactive','archived'].includes(x.status))fail('Невалиден адрес или статус.');
  }else{
   if(!testEik(x.company_eik))fail('Фирмата трябва да има тестов код 000000XXX.');
-  if(r==='employees'&&(!testName(x.full_name)||x.full_name.length>200||x.job_title.length>150||x.reference_code.length>80))fail('Разрешени са само синтетични служители.');
+  if(r==='employees'&&(!testName(x.full_name)||x.full_name.length>200||x.job_title.length>150||!x.reference_code||x.reference_code.length>80))fail('Разрешени са само синтетични служители.');
   if(r==='worksites'&&(x.name.length<2||x.name.length>200||x.address.length>300||!['true','false'].includes(x.active)))fail('Невалидни данни за обект.');
   if(r==='job_positions'&&(x.title.length<2||x.title.length>200||x.department.length>200||!['true','false'].includes(x.active)))fail('Невалидни данни за длъжност.');
   if(r==='risk_assessments'){

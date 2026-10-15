@@ -32,13 +32,27 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
  async function choose(file?:File){
   setRaw('');setPreview(null);setMessage('');setFileName('');
   if(!file)return;
-  if(!file.name.toLowerCase().endsWith('.csv')){setMessage('Приема се само .csv UTF-8. Excel и архиви НЕ се качват.');return;}
-  if(file.size>IMPORT_LIMIT_BYTES){setMessage('Лимитът е 128 KB.');return;}
+  const isXlsx=file.name.toLowerCase().endsWith('.xlsx');
+  if(!isXlsx&&!file.name.toLowerCase().endsWith('.csv')){setMessage('Приема се само CSV или XLSX.');return;}
+  if(file.size>(isXlsx?2*1024*1024:IMPORT_LIMIT_BYTES)){setMessage('Прекалено голям файл.');return;}
   try{
-   const text=await file.text();
-   if(text.includes('\u0000')||text.includes('\uFFFD'))throw new Error('Not UTF8');
+   let text:string;
+   if(isXlsx){
+    const {default:readXlsxFile}=await import('read-excel-file/browser');
+    const sheets=await readXlsxFile(file);
+    if(sheets.length!==1)throw new Error('Разрешен е един лист.');
+    const table=sheets[0].data;
+    if(table.length<2||table.length>101||table.some(row=>row.length!==cols.length))throw new Error('Неправилен брой редове или колони.');
+    if(table[0].map(v=>String(v??'').trim().toLowerCase()).join(';')!==cols.join(';'))throw new Error('Неправилни заглавия.');
+    const cell=(v:unknown)=>v instanceof Date?v.toISOString().slice(0,10):String(v??'');
+    text=table.map(row=>row.map(v=>String.fromCharCode(34)+cell(v).replace(/\x22/g,String.fromCharCode(34,34))+String.fromCharCode(34)).join(String.fromCharCode(59))).join(String.fromCharCode(13,10))+String.fromCharCode(13,10);
+   }else{
+    text=await file.text();
+    if(text.includes('\u0000')||text.includes('\uFFFD'))throw new Error('Невалиден UTF-8.');
+   }
+   if(new TextEncoder().encode(text).length>IMPORT_LIMIT_BYTES)throw new Error('Над 128 KB данни.');
    setRaw(text);setFileName(file.name);
-  }catch{setMessage('Файлът не е валиден UTF-8 CSV.');}
+  }catch(err){setMessage(err instanceof Error?err.message:'Невалиден файл.');}
  }
  function check(){
   setPreview(null);setMessage('');
@@ -67,7 +81,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
    <label>Регистър <select value={resource} onChange={e=>change(e.target.value)}>
      {(Object.keys(CSV_FORMATS) as TransferResource[]).map(k=><option key={k} value={k}>{labels[k]}</option>)}
    </select></label>
-   <p className="subnote">Формат: UTF-8 CSV, точно определени колони. За импорт: до 100 реда и 128 KB. За експорт: до 5000 записа.</p>
+   <p className="subnote">Формати: UTF-8 CSV или XLSX с един лист. За импорт: до 100 реда и 128 KB. За експорт: до 5000 записа.</p>
    <div className="transfer-actions">
     <a className="btn ghost" href={'data:text/csv;charset=utf-8,'+encodeURIComponent(template)}
      download={'ctm-'+resource+'-TEST-template.csv'}>↓ Изтегли CSV шаблон</a>
@@ -76,9 +90,9 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
    </div>
   </section>
   <section className="table-panel transfer-panel">
-   <h2>Импорт на тестови CSV записи</h2>
+   <h2>Импорт на тестови CSV / XLSX записи</h2>
    <p className="subnote">Очаквани колони: <code>{cols.join('; ')}</code></p>
-   <label>Избери CSV<input type="file" accept=".csv,text/csv" disabled={busy}
+   <label>Избери CSV или XLSX<input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" disabled={busy}
     onChange={e=>{void choose(e.target.files?.[0]);}}/></label>
    {fileName&&<p className="subnote">Избран файл: {fileName}</p>}
    <button className="btn ghost" type="button" disabled={busy||!raw} onClick={check}>
@@ -102,7 +116,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
   <section className="table-panel transfer-panel">
    <h2>Импорт на Excel и медицински архиви</h2>
    <p>Тази възможност ще се активира след проверка на правата за медицински данни, защитеното съхранение и съпоставянето на записите. Засега файлът остава само в защитен локален работен процес.</p>
-   <button className="btn ghost" type="button" disabled>Импорт XLSX / медицински архив — предстои одит</button>
+   <button className="btn ghost" type="button" disabled>Реален XLSX / медицински архив — предстои одит</button>
   </section>
  </div>;
 }
