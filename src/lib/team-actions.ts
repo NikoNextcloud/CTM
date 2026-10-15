@@ -1,28 +1,22 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { getContext } from '@/lib/session';
 
-const ROLES = ['admin', 'doctor', 'specialist', 'employer', 'auditor'] as const;
-const Role = z.enum(ROLES);
+const Role = z.enum(['admin', 'doctor', 'specialist', 'employer', 'auditor']);
 type State = { ok: boolean; message: string };
 
 function parseCompanies(data: FormData): string[] | null {
-  const raw = data.getAll('company_ids');
-  const result = z.array(z.string().uuid()).max(100).safeParse(raw);
-  return result.success ? [...new Set(result.data)] : null;
+  const parsed = z.array(z.string().uuid()).max(100).safeParse(data.getAll('company_ids'));
+  return parsed.success ? [...new Set(parsed.data)] : null;
 }
 
-function invitationUrl(): string {
-  // Fixed trusted origin, never derived from Host or forwarded headers.
-  return 'https://ctm-pearl.vercel.app/auth/accept-invite';
-}
-
+// Administrators create the Auth account themselves in Supabase Dashboard.
+// This action only assigns an existing account to the selected CTM organization.
 export async function inviteMember(_previous: State, data: FormData): Promise<State> {
   const ctx = await getContext();
-  if (!ctx.tenant || ctx.role !== 'admin') return { ok: false, message: 'Нямате администраторски права.' };
+  if (!ctx.tenant || ctx.role !== 'admin') return { ok: false, message: 'Само администратор може да добавя членове.' };
   const input = z.object({
     email: z.string().trim().toLowerCase().email().max(254),
     role: Role
@@ -36,36 +30,19 @@ export async function inviteMember(_previous: State, data: FormData): Promise<St
   const existing = await ctx.supabase.rpc('ctm_find_auth_user', {
     p_tenant: ctx.tenant, p_email: input.data.email
   });
-  if (existing.error) return { ok: false, message: 'Неуспешна проверка на съществуващия акаунт.' };
-  let userId = existing.data as string | null;
-  let invited = false;
-
+  if (existing.error) return { ok: false, message: 'Неуспешна проверка на акаунта в Supabase.' };
+  const userId = existing.data as string | null;
   if (!userId) {
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!key || !url) return { ok: false, message: 'Липсва сървърната настройка за изпращане на покани. Свържи се с администратора на инфраструктурата.' };
-    const service = createServiceClient(url, key, {
-      auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false }
-    });
-    const invitation = await service.auth.admin.inviteUserByEmail(input.data.email, {
-      redirectTo: invitationUrl()
-    });
-    if (invitation.error || !invitation.data.user?.id) {
-      return { ok: false, message: 'Поканата не е изпратена. Провери настройките за имейл и Redirect URLs в Supabase.' };
-    }
-    userId = invitation.data.user.id;
-    invited = true;
+    return { ok: false, message: 'Този акаунт още не съществува. Създай го ръчно в Supabase → Authentication → Users, след което опитай отново.' };
   }
 
-  const assignment = await ctx.supabase.rpc('ctm_manage_member', {
+  const result = await ctx.supabase.rpc('ctm_manage_member', {
     p_tenant: ctx.tenant, p_user: userId, p_role: input.data.role,
     p_active: true, p_company_ids: companyIds
   });
-  if (assignment.error) {
-    return { ok: false, message: 'Потребителят е намерен или поканен, но правата не са записани. Провери SQL миграцията и опитай отново.' };
-  }
+  if (result.error) return { ok: false, message: 'Базата отказа присвояването. Провери фирмите и ролята.' };
   revalidatePath('/app/team');
-  return { ok: true, message: invited ? 'Поканата е изпратена. Достъпът е настроен; потребителят трябва да зададе парола.' : 'Съществуващият потребител получи достъп до организацията.' };
+  return { ok: true, message: 'Потребителят вече има настроен достъп до организацията.' };
 }
 
 export async function updateMember(_previous: State, data: FormData): Promise<State> {

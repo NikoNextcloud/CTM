@@ -25,14 +25,14 @@ function CompanyChoices({ companies, selected = [] }: { companies: Company[]; se
 function InviteForm({ companies }: { companies: Company[] }) {
   const [state, action, pending] = useActionState(inviteMember, initial);
   return <section className="team-panel"><h2>Добави потребител</h2>
-    <p className="muted">Новият потребител получава имейл покана и сам задава паролата си. Съществуващ Supabase акаунт се добавя към организацията без повторна покана.</p>
+    <p className="muted">Първо създай потребителя ръчно в Supabase → Authentication → Users. Тук само задаваш неговите права в СТМ 2.0.</p>
     <form action={action} className="team-form">
       <div className="team-form-grid">
         <label>Служебен имейл<input type="email" name="email" required maxLength={254} placeholder="user@company.bg" autoComplete="email" /></label>
         <label>Потребителска роля<select name="role" defaultValue="specialist">{roles.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
       </div>
       <CompanyChoices companies={companies} />
-      <button className="btn primary" disabled={pending} type="submit">{pending ? 'Обработка…' : 'Покани или добави потребител →'}</button>
+      <button className="btn primary" disabled={pending} type="submit">{pending ? 'Обработка…' : 'Добави съществуващ акаунт →'}</button>
       {state.message && <div role="status" className={'notice ' + (state.ok ? 'team-success' : 'warn')}>{state.message}</div>}
     </form>
   </section>;
@@ -60,13 +60,13 @@ function MemberRow({ member, ownUserId, companies, selected }: { member: Member;
 }
 
 export function TeamManager({ ownUserId, members, companies, access }: { ownUserId: string; members: Member[]; companies: Company[]; access: Access[] }) {
-  return <div className="content"><div className="page-header"><div><p className="eyebrow">АДМИНИСТРАЦИЯ / ДОСТЪП</p><h1>Екип и потребителски роли</h1><p>Покани, промяна на роли и достъп до конкретни фирми.</p></div><span className="tag">{members.length} акаунта</span></div>
+  return <div className="content"><div className="page-header"><div><p className="eyebrow">АДМИНИСТРАЦИЯ / ДОСТЪП</p><h1>Екип и потребителски роли</h1><p>Ръчно добавяне на съществуващи акаунти, роли и достъп по фирма.</p></div><span className="tag">{members.length} акаунта</span></div>
     <div className="notice warn"><strong>Внимание:</strong> медицинските сведения са отделени от административните регистри. Ролята „работодател“ вижда само фирмите, към които е назначена. Системата остава в тестов режим.</div>
     <InviteForm companies={companies} />
     <section className="team-panel"><h2>Потребители в организацията</h2>
       {members.length ? members.map(member => <MemberRow key={member.user_id} member={member} ownUserId={ownUserId} companies={companies} selected={access.filter(x => x.user_id === member.user_id).map(x => x.company_id)} />) :
         <p className="muted">Няма добавени потребители.</p>}
     </section>
-    <div className="notice">Поканите се изпращат чрез Supabase Auth. При проблем провери <strong>Authentication → URL Configuration</strong>, допустимия адрес <code>https://ctm-pearl.vercel.app/auth/accept-invite</code> и настройките за SMTP. Действията с роли се записват в одитния регистър.</div>
+    <div className="notice">СТМ 2.0 не създава акаунти и не изпраща покани. Потребителите се създават само ръчно в <strong>Supabase → Authentication → Users</strong>. Действията с роли се записват в одитния регистър.</div>
   </div>;
 }

@@ -19,3 +19,11 @@
 .team-self-note{padding:10px 0;font-size:12px}.team-success{background:#edf9f2;border-color:#bfe6ce;color:#216a47}
 .team-status-ok,.team-status-error{font-size:12px;margin-top:12px}.team-status-ok{color:#216a47}.team-status-error{color:#a44d38}
 @media(max-width:720px){.team-form-grid{grid-template-columns:1fr}.team-panel{padding:17px}.team-member-head{align-items:flex-start;flex-direction:column}}
+
+/* v0.3: forms for test-only workers and non-medical risk assessment records */
+.company-form select,.risk-form select,.risk-form input{width:100%;min-height:43px;padding:11px;border:1px solid #dce5eb;border-radius:9px;background:#fff;color:var(--ink)}
+.risk-form{margin-top:17px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;align-items:end}
+.risk-form label{font-size:12px;font-weight:700;display:grid;gap:7px;color:#526b7e}
+.risk-form button{align-self:end}
+@media(max-width:1000px){.risk-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.risk-form{grid-template-columns:1fr}}
