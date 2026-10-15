@@ -151,7 +151,7 @@ export default async function CompanyWorkspace({params,searchParams}:Props){
           </form>
           <p className="subnote">При потвърждение или конфликт опиши достоверен източник (поне 12 символа). Промяната се одитира.</p>
         </details>
-      </td></tr>)}</tbody></table></div>
+      </td>}</tr>)}</tbody></table></div>
     {!periodRows.length&&<p className="company-empty">Няма периоди на тази страница.</p>}{pager('periods',counts.periods)}
    </section>
   </div>
