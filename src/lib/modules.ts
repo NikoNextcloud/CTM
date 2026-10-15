@@ -9,3 +9,18 @@ export const modules: {id:ModuleId;title:string;subtitle:string;table?:string;co
  {id:'team',title:'Екип и роли',subtitle:'Потребителски достъп и покани'},
  {id:'reports',title:'Справки',subtitle:'Контролирани справки и експорт'},
 ];
+
+/** UI-level discoverability only. PostgreSQL RLS remains the security boundary. */
+const roleAccess: Record<ModuleId, readonly string[]> = {
+ companies: ['admin', 'specialist', 'doctor', 'employer', 'auditor'],
+ employees: ['admin', 'specialist', 'doctor', 'employer'],
+ examinations: ['doctor', 'specialist'],
+ 'sick-leaves': ['doctor'],
+ documents: ['admin', 'specialist', 'doctor', 'employer'],
+ migration: ['admin'],
+ team: ['admin'],
+ reports: ['admin', 'specialist']
+};
+export function canAccessModule(role: string, id: ModuleId): boolean {
+ return roleAccess[id].includes(role);
+}

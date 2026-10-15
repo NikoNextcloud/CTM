@@ -37,14 +37,7 @@
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 4. `npm install`, `npm run dev`, `http://localhost:3000`.
-5. За първия потребител: поканете/създайте потребител чрез Supabase Auth Dashboard, след което собственикът на проекта създава `tenants` и `tenant_members` чрез Dashboard SQL Editor. Пример без реални данни:
-
-```sql
-insert into public.tenants(name) values ('Тестова СТМ') returning id;
--- Използвайте върнатото tenant id и реалния auth.users.id от Dashboard.
-insert into public.tenant_members(tenant_id,user_id,role)
-values ('YOUR_TENANT_UUID','YOUR_AUTH_USER_UUID','admin');
-```
+5. За първия администратор: изпълнете [docs/ADMIN_BOOTSTRAP.md](docs/ADMIN_BOOTSTRAP.md). Поканете и потвърдете служебния имейл в Supabase Auth, след което собственикът на проекта присвоява членство в тестовата организация чрез контролиран SQL скрипт. Не се създава нова организация при всяко изпълнение.
 
 Няма отворена форма за регистрация. Не използвайте `service_role` key в `NEXT_PUBLIC_*`, в браузър или в GitHub.
 
