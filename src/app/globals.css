@@ -48,3 +48,21 @@
 .report-panels .subnote{padding:0 22px}
 @media(max-width:950px){.company-lists,.report-panels{grid-template-columns:1fr}.company-lists .table-panel:last-child{grid-column:auto}}
 @media(max-width:650px){.company-detail-form,.report-metrics{grid-template-columns:1fr}.company-detail-form button{justify-self:stretch}}
+
+/* v0.5 - optimistic-version edits and paginated company dossiers */
+.edit-panel{padding:20px}
+.edit-panel summary,.inline-edit summary{cursor:pointer;color:var(--accent);font-weight:700}
+.detail-edit-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:end;padding-top:20px}
+.detail-edit-form label,.inline-edit-form label{font-size:12px;display:grid;gap:7px;color:#526b7e;font-weight:700}
+.detail-edit-form input,.detail-edit-form select,.detail-edit-form textarea,.inline-edit-form input{font:inherit;width:100%;padding:11px;border:1px solid #dce5eb;border-radius:8px;background:white;color:var(--ink)}
+.detail-edit-form textarea{min-height:75px;resize:vertical}
+.detail-edit-form button{align-self:end}
+.inline-edit{min-width:120px}.inline-edit summary{font-size:11px}
+.inline-edit-form{display:grid;gap:12px;min-width:205px;margin:12px 0;padding:12px;background:#f5fafb;border-radius:9px}
+.inline-edit-form label.checkbox-line{display:flex;align-items:center}
+.inline-edit-form .checkbox-line input{width:auto}
+.company-lists .table-panel{min-width:0}
+.company-lists .table-wrap{overflow-x:auto}
+.risk-detail .company-empty{line-height:1.6;color:var(--ink)}
+@media(max-width:1000px){.detail-edit-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.detail-edit-form{grid-template-columns:1fr}.company-lists{display:block}}
