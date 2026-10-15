@@ -27,3 +27,24 @@
 .risk-form button{align-self:end}
 @media(max-width:1000px){.risk-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.risk-form{grid-template-columns:1fr}}
+
+/* v0.4 — company dossier, job structure and role-limited administrative reports */
+.company-link{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.company-detail-metrics{margin-bottom:20px}
+.company-detail-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;align-items:end;padding:14px 0}
+.company-detail-form label{display:grid;gap:7px;font-size:12px;color:#4d6575;font-weight:700}
+.company-detail-form input,.company-detail-form select{font:inherit;width:100%;padding:11px 12px;min-height:43px;border:1px solid #dce5eb;border-radius:9px;background:white;color:var(--ink)}
+.company-detail-form button{justify-self:start}
+.company-editor .add-panel{padding:19px}
+.company-section-title{padding:22px 22px 0;font-size:18px;margin-bottom:10px}
+.company-empty{font-size:13px;padding:12px 22px;color:var(--muted)}
+.company-empty a{color:var(--accent);font-weight:bold}
+.company-lists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.company-lists .table-panel:last-child{grid-column:1 / -1}
+.report-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.report-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.report-line{display:flex;justify-content:space-between;gap:20px;padding:12px 22px;border-bottom:1px solid var(--line);font-size:13px}
+.report-line strong{font-size:19px}
+.report-panels .subnote{padding:0 22px}
+@media(max-width:950px){.company-lists,.report-panels{grid-template-columns:1fr}.company-lists .table-panel:last-child{grid-column:auto}}
+@media(max-width:650px){.company-detail-form,.report-metrics{grid-template-columns:1fr}.company-detail-form button{justify-self:stretch}}
