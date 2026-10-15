@@ -37,7 +37,7 @@
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 4. `npm install`, `npm run dev`, `http://localhost:3000`.
-5. За първия потребител: поканете/създайте потребител чрез Supabase Auth Dashboard, след което собственикът на проекта създава `tenants` и `tenant_members` чрез Dashboard SQL Editor. Пример без реални данни:
+5. За първия администратор: следвайте точно процедурата в [docs/ADMIN_BOOTSTRAP.md](docs/ADMIN_BOOTSTRAP.md). Поканата за акаунт се прави през Supabase Auth Dashboard. Тестовата организация вече е създадена в отделния dev проект. Примерният SQL по-долу се използва само след потвърдена самоличност:
 
 ```sql
 insert into public.tenants(name) values ('Тестова СТМ') returning id;
