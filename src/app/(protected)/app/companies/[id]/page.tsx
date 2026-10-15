@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getContext } from '@/lib/session';
 import { createWorksite, createJobPosition, createEmploymentPeriod } from '@/lib/organization-actions';
 import { EditCompanyPanel,EditWorksitePanel,EditPositionPanel,EditPeriodPanel } from '@/components/edit-panels';
+import { reviewEmploymentPeriod } from '@/lib/employment-review-actions';
 export const dynamic='force-dynamic';
 
 type Search={sites?:string;positions?:string;employees?:string;periods?:string;findEmployee?:string;findPosition?:string};
@@ -66,8 +67,8 @@ export default async function CompanyWorkspace({params,searchParams}:Props){
    <p className="eyebrow">ФИРМЕНО ДОСИЕ · ТЕСТОВ РЕГИСТЪР</p><h1>{company.name}</h1>
    <p>ЕИК / БУЛСТАТ: {company.eik} · {company.status}</p>
    <p>{company.address||'Адрес не е въведен'}{company.activity?' · '+company.activity:''}</p>
-  </div><span className="tag">v0.5</span></div>
-  <div className="notice warn">Само тестови данни. Не въвеждай реални лични/медицински сведения преди пълния одит. Трудовите периоди са непотвърдени.</div>
+  </div><span className="tag">v0.6 · тестова версия</span></div>
+  <div className="notice warn">Само тестови данни — без реални ЕГН и медицински сведения. Трудовите периоди се въвеждат като непотвърдени и се проверяват ръчно срещу документи с проследимо основание.</div>
   {allErrors&&<div className="notice warn">Някои списъци не могат да бъдат заредени. Провери правата си.</div>}
   {canWrite&&<EditCompanyPanel company={company}/>}
   <section className="metrics company-detail-metrics">
@@ -133,7 +134,24 @@ export default async function CompanyWorkspace({params,searchParams}:Props){
       <td>{positionNames.get(p.position_id)||'Запис в регистъра'}</td>
       <td>{p.started_on}</td><td>{p.ended_on||'—'}</td>
       <td>{p.verification_status==='verified'?'Потвърден':p.verification_status==='conflict'?'Конфликт':'Непотвърден'}</td>
-      {canWrite&&<td><EditPeriodPanel companyId={id} period={p}/></td>}</tr>)}</tbody></table></div>
+      {canWrite&&<td>
+        <EditPeriodPanel companyId={id} period={p}/>
+        <details className="inline-edit"><summary>Проверка на източник</summary>
+          <form className="review-inline" action={reviewEmploymentPeriod}>
+            <input type="hidden" name="id" value={p.id}/>
+            <input type="hidden" name="company_id" value={id}/>
+            <input type="hidden" name="revision" value={p.revision}/>
+            <label>Резултат<select name="verification_status" defaultValue={p.verification_status}>
+              <option value="unverified">Непотвърден</option>
+              <option value="verified">Потвърден</option>
+              <option value="conflict">Конфликт</option>
+            </select></label>
+            <label>Основание за проверката<input name="verification_note" maxLength={300} placeholder="Документ, дата и основание — без здравни данни"/></label>
+            <button type="submit" className="btn ghost">Запиши проверката</button>
+          </form>
+          <p className="subnote">При потвърждение или конфликт опиши достоверен източник (поне 12 символа). Промяната се одитира.</p>
+        </details>
+      </td></tr>)}</tbody></table></div>
     {!periodRows.length&&<p className="company-empty">Няма периоди на тази страница.</p>}{pager('periods',counts.periods)}
    </section>
   </div>

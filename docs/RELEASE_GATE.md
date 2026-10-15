@@ -14,3 +14,11 @@
 - [ ] Bulgarian occupational-medicine law and retention rules confirmed with specialist
 
 **Until every relevant item has passed, test data ONLY.**
+
+## V0.6 стоп-условия
+- [ ] GitHub CI успешно изпълнява всичките пет статични серии и v06Security; няма регресии.
+- [ ] Възстановяване на пълна изолирана БД и отделните файлове е успешно изпробвано.
+- [ ] Пълни тестови employer/doctor/auditor/specialist роли и поне две фиктивни фирми.
+- [ ] Зададена MFA политика и защита от компрометирани пароли.
+- [ ] Договор за търговско използване на Vercel и обработващи данни подизпълнители.
+- [ ] Медицинските документи минават отделен storage/security/legal gate.

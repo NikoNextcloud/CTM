@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {parseCsv,csvEscape} from '../src/lib/import-csv.ts';
+const good='\uFEFFname;eik;address;status\r\n"ТЕСТ Фирма, ЕООД";000000001;"Тест; адрес";active\r\n';
+const result=parseCsv(good,'companies');
+assert.equal(result.issues.length,0);
+assert.equal(result.rows.length,1);
+assert.equal(result.rows[0].eik,'000000001');
+assert.equal(result.rows[0].address,'Тест; адрес');
+assert.match(csvEscape(' \t=HYPERLINK("http://invalid")'),/^"' /);
+assert.ok(parseCsv('name;eik;address;status\nРеална фирма;123456789;;active','companies').issues.length>0);
+assert.ok(parseCsv('name;eik;address;status\nТЕСТ фирма;123456789;;active','companies').issues.length>0);
+assert.ok(parseCsv('name;eik;address;status\n"ТЕСТ фирма;000000001;;active','companies').issues.length>0);
+assert.ok(parseCsv('name;eik;address;status\nТЕСТ фирма;000000001;x;active;extra','companies').issues.length>0);
+console.log('CSV parser: UTF8, quotes, columns, formula injection and synthetic-only checks PASSED.');

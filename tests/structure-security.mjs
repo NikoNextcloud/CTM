@@ -23,7 +23,7 @@ for(const fn of ['createWorksite','createJobPosition','createEmploymentPeriod'])
 assert.match(actions,/verification_status:'unverified'/);
 assert.match(actions,/ctx\.tenant/);
 assert.match(actions,/company_id.*input\.company_id/s);
-assert.match(dossier,/firmResult\.error \|\| !firmResult\.data/);
+assert.match(dossier,/firmResult\.error\s*\|\|\s*!firmResult\.data/);
 assert.match(dossier,/getContext\(\)/);
 assert.match(listing,/company-link/);
 assert.match(report,/admin','specialist/);
