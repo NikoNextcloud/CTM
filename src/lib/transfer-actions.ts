@@ -41,7 +41,7 @@ export async function executeNonClinicalImport(resource:string,raw:string,review
  if(error){
   return{ok:false,rows:0,message:error.code==='23505'?
    'Повторен импорт на този пакет е блокиран.':
-   'Базата отказа импорта. Провери тестовите фирмени кодове, колоните и правата.'};
+   'Базата отказа импорта. Провери ограниченията на текущия импорт, фирмените кодове, колоните и правата.'};
  }
  revalidatePath('/app');
  for(const p of ['companies','employees','risks','data-transfer'])revalidatePath('/app/'+p);

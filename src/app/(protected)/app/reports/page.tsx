@@ -33,7 +33,7 @@ export default async function ReportsPage() {
   return <div className="content">
     <div className="page-header"><div><p className="eyebrow">ОБЩИ АДМИНИСТРАТИВНИ ПОКАЗАТЕЛИ</p>
       <h1>Справки</h1><p>Агрегирана информация от разрешените регистри — без медицински записи.</p></div>
-      <span className="tag">v0.4 · тестов режим</span></div>
+      <span className="tag">Работна версия</span></div>
     <section className="metrics report-metrics">
       {results.map(item=><div key={item.table} className="metric"><span>{item.label}</span>
         <strong>{item.error?'—':item.count.toLocaleString('bg-BG')}</strong>
@@ -54,6 +54,6 @@ export default async function ReportsPage() {
         <p className="company-empty"><Link href="/app/risks">Проекти на рисковете →</Link></p>
       </div>
     </div>
-    <div className="notice warn">Това е управленска справка за тестови данни. Не представлява нормативен отчет на СТМ, медицинска справка или доказателство за пълна миграция.</div>
+    <div className="notice warn">Справката обобщава наличните административни записи. Не представлява нормативен отчет на СТМ, медицинска справка или доказателство за пълна миграция.</div>
   </div>;
 }

@@ -81,3 +81,11 @@
 .transfer-preview{margin-top:18px;border-top:1px solid var(--line);padding-top:18px}
 .transfer-preview .table-wrap{margin:16px 0}
 .transfer-panel .notice{margin:12px 0}
+
+/* CTM v0.9: editable workbook column mapping */
+.transfer-map-grid{display:grid;gap:10px;margin:18px 0}
+.transfer-map-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;border-bottom:1px solid var(--line);padding:12px 0}
+.transfer-map-row label{display:grid;gap:7px;margin:0;color:var(--muted);font-size:12px}
+.transfer-map-row select,.transfer-map-row input,.transfer-panel input[type=number]{width:100%;max-width:none;min-height:42px;border:1px solid #dce5eb;border-radius:9px;padding:10px;background:#fff;color:var(--ink)}
+.transfer-map-row select{min-width:0}
+@media(max-width:700px){.transfer-map-row{grid-template-columns:1fr}}

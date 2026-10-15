@@ -61,7 +61,7 @@ function MemberRow({ member, ownUserId, companies, selected }: { member: Member;
 
 export function TeamManager({ ownUserId, members, companies, access }: { ownUserId: string; members: Member[]; companies: Company[]; access: Access[] }) {
   return <div className="content"><div className="page-header"><div><p className="eyebrow">АДМИНИСТРАЦИЯ / ДОСТЪП</p><h1>Екип и потребителски роли</h1><p>Ръчно добавяне на съществуващи акаунти, роли и достъп по фирма.</p></div><span className="tag">{members.length} акаунта</span></div>
-    <div className="notice warn"><strong>Внимание:</strong> медицинските сведения са отделени от административните регистри. Ролята „работодател“ вижда само фирмите, към които е назначена. Системата остава в тестов режим.</div>
+    <div className="notice warn"><strong>Внимание:</strong> медицинските сведения са отделени от административните регистри. Ролята „работодател“ вижда само фирмите, към които е назначена. Медицинските данни се обработват само след одобрени права и защитен процес.</div>
     <InviteForm companies={companies} />
     <section className="team-panel"><h2>Потребители в организацията</h2>
       {members.length ? members.map(member => <MemberRow key={member.user_id} member={member} ownUserId={ownUserId} companies={companies} selected={access.filter(x => x.user_id === member.user_id).map(x => x.company_id)} />) :

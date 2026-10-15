@@ -64,11 +64,11 @@ export default async function CompanyWorkspace({params,searchParams}:Props){
 
  return <div className="content">
   <div className="page-header"><div><Link href="/app/companies" className="back">← Всички фирми</Link>
-   <p className="eyebrow">ФИРМЕНО ДОСИЕ · ТЕСТОВ РЕГИСТЪР</p><h1>{company.name}</h1>
+   <p className="eyebrow">ФИРМЕНО ДОСИЕ · АДМИНИСТРАТИВЕН РЕГИСТЪР</p><h1>{company.name}</h1>
    <p>ЕИК / БУЛСТАТ: {company.eik} · {company.status}</p>
    <p>{company.address||'Адрес не е въведен'}{company.activity?' · '+company.activity:''}</p>
-  </div><span className="tag">v0.6 · тестова версия</span></div>
-  <div className="notice warn">Само тестови данни — без реални ЕГН и медицински сведения. Трудовите периоди се въвеждат като непотвърдени и се проверяват ръчно срещу документи с проследимо основание.</div>
+  </div><span className="tag">v0.9 · работна версия</span></div>
+  <div className="notice warn">ЕГН и медицински сведения не се обработват в това административно досие. Трудовите периоди се въвеждат като непотвърдени и се проверяват ръчно срещу документи с проследимо основание.</div>
   {allErrors&&<div className="notice warn">Някои списъци не могат да бъдат заредени. Провери правата си.</div>}
   {canWrite&&<EditCompanyPanel company={company}/>}
   <section className="metrics company-detail-metrics">

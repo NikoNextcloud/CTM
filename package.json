@@ -1,13 +1,13 @@
 {
   "name": "ctm-2-0",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test:static": "node tests/static.mjs && node tests/team-security.mjs && node tests/risk-security.mjs && node tests/structure-security.mjs && node tests/v05-security.mjs && node tests/v06-security.mjs && node tests/transfer-security.mjs && node --experimental-strip-types tests/csv-import.test.mjs && node tests/v08-security.mjs"
+    "test:static": "node tests/static.mjs && node tests/team-security.mjs && node tests/risk-security.mjs && node tests/structure-security.mjs && node tests/v05-security.mjs && node tests/v06-security.mjs && node tests/transfer-security.mjs && node --experimental-strip-types tests/csv-import.test.mjs && node tests/v08-security.mjs && node --import tsx tests/workbook-mapping.test.ts && node tests/register-actions-security.mjs"
   },
   "dependencies": {
     "next": "^16.0.0",
@@ -25,7 +25,9 @@
     "@types/react-dom": "^19.0.0",
     "@types/node": "^22.0.0",
     "eslint": "^9.0.0",
-    "eslint-config-next": "^16.0.0"
+    "eslint-config-next": "^16.0.0",
+    "tsx": "4.20.6",
+    "fflate": "0.8.2"
   },
   "engines": {
     "node": ">=20.9.0"

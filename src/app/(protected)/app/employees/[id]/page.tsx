@@ -20,7 +20,7 @@ export default async function EmployeeDetail({params}:Props){
    <h1>{data.full_name}</h1><p>Длъжност: {data.job_title||'—'} · Вътрешен номер: {data.reference_code||'—'}</p>
   </div><span className="tag">{data.current_status==='pending'?'Статус: непотвърден':data.current_status}</span></div>
   <p><Link href={'/app/companies/'+data.company_id} className="company-link">Отвори фирменото досие →</Link></p>
-  <div className="notice warn">Не въвеждай ЕГН, диагнози или реални медицински данни. Статусът не доказва действащо трудово правоотношение.</div>
+  <div className="notice warn">ЕГН, диагнози и медицински данни не се въвеждат в този административен регистър. Статусът не доказва действащо трудово правоотношение.</div>
   {canEdit&&<EditEmployeePanel employee={data}/>}
  </div>;
 }
