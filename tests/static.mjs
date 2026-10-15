@@ -14,4 +14,4 @@ assert.match(read('src/lib/modules.ts'),/canAccessModule/);
 assert.match(read('src/components/sidebar.tsx'),/modules.filter\(m=>canAccessModule/);
 assert.match(read('src/app/(protected)/app/[module]/page.tsx'),/safeColumns/);
 assert.match(read('src/app/(protected)/app/layout.tsx'),/signOut/);
-console.log('STATIC AUDIT: 10/10 checks passed (not a substitute for DB/integration tests).');
+console.log('STATIC AUDIT: all structural checks passed (not a substitute for DB/integration tests).');
