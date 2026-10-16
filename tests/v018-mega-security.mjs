@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const route=read('src/app/api/mega/file/[handle]/route.ts');
+const page=read('src/app/(protected)/app/migration/mega/page.tsx');
+const detail=read('src/app/(protected)/app/migration/mega/[handle]/page.tsx');
+const sql=read('supabase/migrations/20261016165638_mega_catalog_v018.sql');
+const edge=read('supabase/functions/ctm-mega-index/index.ts');
+for(const s of ['private.ctm_mega_files','ENABLE ROW LEVEL SECURITY','REVOKE ALL','ctm-private-originals','ctm_mega_file_detail','cipher-algo=aes256','ctm_mega_ingest_internal'])assert.ok(sql.includes(s),'Missing security gate '+s);
+assert.match(route,/ctx\.role!=='admin'/);
+assert.match(route,/ctm_mega_file_detail/);
+assert.match(route,/Readable\.toWeb/);
+assert.match(route,/private, no-store/);
+assert.match(page,/ctm_mega_summary/);
+assert.match(detail,/ctm_mega_root_files/);
+assert.match(edge,/x-ctm-job-token/);
+console.log('CTM v0.18 secure MEGA metadata and original streaming: PASS');

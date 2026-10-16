@@ -179,6 +179,9 @@
 .ctm-archive-field-wide{grid-column:1/-1}
 .ctm-edit-provenance{margin:18px 0;padding:12px 14px;border:1px solid #dce8ec;background:#f5f9fb;border-radius:9px;overflow-wrap:anywhere;color:#637c8b;font-size:11px;line-height:1.65}
 .ctm-edit-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 0}
+.ctm-archive-subline{display:block;margin-top:5px;color:#667b87;font-size:11px;max-width:540px;overflow-wrap:anywhere;line-height:1.55}
+.table-wrap .btn.ghost{min-height:34px;padding:7px 11px;font-size:12px}
+@media(max-width:650px){.ctm-archive-subline{max-width:220px}.table-wrap .btn.ghost{white-space:normal;text-align:center}}
 .ctm-archive-edit-form>.checkbox-line{font-size:12px;line-height:1.6;display:flex;align-items:center;gap:9px}
 .ctm-company-research-summary{background:#ecf7f4;border:1px solid #c8e5df;border-radius:13px;padding:17px 20px;margin:14px 0 20px;color:#2b5962}
 .ctm-company-research-summary strong{display:block;font-size:15px;color:#18535b;margin:0 0 6px}

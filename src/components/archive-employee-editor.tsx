@@ -17,7 +17,7 @@ export function ArchiveEmployeeEditor({
   ok:false,message:'',revision
  } satisfies ArchiveEditState);
  useEffect(()=>{
-  if(state.ok){setEditing(false);router.refresh();}
+  if(state.ok){router.refresh();}
  },[state.ok,state.revision,router]);
  const fields=Object.entries(data).filter(([key])=>!immutable.has(key));
  return <section id="archive-edit" className="ctm-action-card ctm-archive-editor">
