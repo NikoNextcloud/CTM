@@ -30,7 +30,14 @@ export default async function ModulePage({params,searchParams}:Props){const {mod
  {m.id==='sick-leaves'&&ctx.role==='doctor'&&<SickLeaveForm employees={availableEmployees}/>}
  {m.id==='documents'&&['admin','specialist','doctor'].includes(ctx.role)&&
   <DocumentMetadataForm role={ctx.role} companies={companies} employees={availableEmployees}/>}
- {m.id==='migration'&&ctx.role==='admin'&&<MigrationSourceForm/>}
+ {m.id==='migration'&&ctx.role==='admin'&&<>
+   <div className="table-panel">
+    <h2>Фирми от архивните източници</h2>
+    <p>Прегледай кандидатите от MEGA и EMS-STM, провери ЕИК и свържи само потвърдените юридически лица.</p>
+    <Link className="btn primary" href="/app/migration/companies">Отвори кандидатите за фирми →</Link>
+   </div>
+   <MigrationSourceForm/>
+  </>}
  {employeeResult?.error&&<div className="notice warn">Не могат да се заредят служителите за избора.</div>}
  {companiesResult?.error&&<div className="notice warn">Неуспешно зареждане на фирмите.</div>}<div className="table-panel"><form className="searchbar"><input aria-label="Търси" type="search" name="q" placeholder="Търси в регистъра…" defaultValue={q}/><button className="btn primary" type="submit">Търси</button></form>{error?<div className="notice warn">Грешка при зареждане. Проверете правата и миграцията на базата.</div>:rows.length===0?<div className="empty"><div className="empty-icon">▧</div><h3>Няма записи за показване</h3><p>Добавете запис или променете търсенето.</p></div>:<div className="table-wrap"><table><thead><tr>{m.columns?.map(c=><th key={c.key}>{c.label}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={String(r.id)}>{m.columns?.map(col=><td key={col.key}>{m.id==='companies'&&col.key==='name' ? <Link className="company-link" href={'/app/companies/'+String(r.id)}>{String(r[col.key]??'—')} →</Link> : m.id==='employees'&&col.key==='full_name' ? <Link className="company-link" href={'/app/employees/'+String(r.id)}>{String(r[col.key]??'—')} →</Link> : m.id==='risks'&&col.key==='hazard' ? <Link className="company-link" href={'/app/risks/'+String(r.id)}>{String(r[col.key]??'—')} →</Link> : String(r[col.key]??'—')}</td>)}</tr>)}</tbody></table></div>}<div className="pagination"><span>Страница {page} · {(count||0).toLocaleString('bg-BG')} записа</span><div>{page>1&&<Link className="btn ghost" href={'?page='+(page-1)+'&q='+encodeURIComponent(q)}>← Назад</Link>}{page*25<(count||0)&&<Link className="btn ghost" href={'?page='+(page+1)+'&q='+encodeURIComponent(q)}>Напред →</Link>}</div></div></div>{['companies','employees'].includes(m.id)&&canWrite&&<p className="subnote">CSV експортът е достъпен за администратор или СТМ специалист: <Link href={'/api/export?resource='+m.id}>експорт на разрешените данни</Link>.</p>}</div>
 }
