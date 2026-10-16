@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
+const preview=read('src/components/pending-company-candidates.tsx');
+const dashboard=read('src/app/(protected)/app/page.tsx');
+const listing=read('src/app/(protected)/app/[module]/page.tsx');
+const nav=read('src/components/sidebar.tsx');
+const modules=read('src/lib/modules.ts');
+const landing=read('src/app/page.tsx');
+
+assert.match(preview,/ctx\.role!=='admin'/,'Pending companies must be admin-only');
+assert.match(preview,/\.eq\('tenant_id',ctx\.tenant\)/,'Tenant filtering required');
+assert.match(preview,/\.eq\('review_status','pending'\)/,'Only review candidates');
+assert.match(preview,/\/app\/migration\/companies/,'Direct link to verification');
+assert.match(preview,/За проверка/,'No false claims of verified companies');
+assert.match(dashboard,/<PendingCompanyCandidates compact\/>/,'Show candidates on dashboard');
+assert.match(listing,/m\.id==='companies'&&ctx\.role==='admin'&&<PendingCompanyCandidates\/>/);
+assert.match(listing,/m\.id==='migration'/);
+assert.match(listing,/m\.id==='job-positions'\?'job_positions'/);
+assert.match(modules,/id:'worksites'/);
+assert.match(modules,/id:'job-positions'/);
+assert.match(nav,/href="\/app\/migration\/companies"/);
+assert.match(landing,/client\.auth\.getUser\(\)/);
+assert.ok(landing.includes("if(user)redirect('/app')"));
+assert.doesNotMatch(preview,/SUPABASE_SERVICE_ROLE_KEY|service_role|from\('employees'\)/i);
+console.log('Verified staging visibility and admin/tenant boundaries: PASS');
