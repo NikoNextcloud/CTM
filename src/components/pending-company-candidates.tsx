@@ -10,21 +10,21 @@ export async function PendingCompanyCandidates({compact=false}:{compact?:boolean
   .eq('tenant_id',ctx.tenant)
   .eq('review_status','pending')
   .order('created_at',{ascending:false})
-  .limit(compact?6:20);
+  .limit(compact?4:12);
  if(error)return <div className="notice warn" role="alert">
   Списъкът с фирми за проверка не може да се зареди. Няма промяна по архивните записи.
  </div>;
  if(!count)return null;
  const rows=data||[];
- return <section className="table-panel" aria-label="Непотвърдени фирмени кандидати">
-  <div className="section-heading">
-   <div><p className="eyebrow">ДАННИ ОТ АРХИВИТЕ · ЗА ПРЕГЛЕД</p>
-    <h2>{count.toLocaleString('bg-BG')} фирмени имена чакат проверка</h2>
-    <p>Имената вече съществуват в базата, но не са потвърдени работодатели.
-     ЕИК и договорите трябва да бъдат сверени, преди да попаднат в основния регистър.</p>
+ return <section className="overview-card" aria-label="Непотвърдени фирмени кандидати">
+  <div className="overview-head">
+   <div className="overview-copy"><p className="overview-eyebrow">ДАННИ ОТ АРХИВИТЕ · ЗА ПРЕГЛЕД</p>
+    <h2>Фирми от архива <span className="overview-count">{count}</span></h2>
+    <p>За проверка на ЕИК и документи · не са активни работодатели</p>
    </div>
+   <Link className="overview-action" href="/app/migration/companies">Виж всички →</Link>
   </div>
-  <div className="table-wrap"><table>
+  <div className="overview-table-wrap"><table className="overview-table">
    <thead><tr><th>Наименование от източника</th><th>Произход</th><th>Състояние</th></tr></thead>
    <tbody>{rows.map(row=><tr key={row.id}>
     <td><Link className="company-link"
@@ -34,10 +34,6 @@ export async function PendingCompanyCandidates({compact=false}:{compact?:boolean
     <td>За проверка</td>
    </tr>)}</tbody>
   </table></div>
-  <p className="subnote">Показани са {rows.length} от {count} кандидата. Изборът на кандидат
-   не активира фирма и не прехвърля служители или медицински данни.</p>
-  <p><Link className="btn primary" href="/app/migration/companies">
-   Отвори всички {count.toLocaleString('bg-BG')} кандидата и провери ЕИК →
-  </Link></p>
+  <div className="overview-footer">Показани {rows.length} от {count} непотвърдени фирми</div>
  </section>;
 }
