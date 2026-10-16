@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {getContext} from '@/lib/session';
 export const dynamic='force-dynamic';
 type Root={handle:string;name:string;files:number;bytes:number;stored:number};
-type Totals={total_files:number;root_groups:number;total_bytes:number;stored_files:number};
+type Totals={total_files:number;root_groups:number;total_bytes:number;stored_files:number;extracted_files:number;readable_files:number;unsupported_files:number;error_files:number};
 type Props={searchParams:Promise<{q?:string;page?:string}>};
 const fmt=(v:number)=>Number(v||0).toLocaleString('bg-BG');
 const mb=(v:number)=>(Number(v||0)/1048576).toLocaleString('bg-BG',{maximumFractionDigits:1})+' MB';
@@ -28,8 +28,12 @@ export default async function MegaPage({searchParams}:Props){
   <div className="metric"><span>Групи източници</span><strong>{fmt(stats.root_groups)}</strong></div>
   <div className="metric"><span>Общо файлове</span><strong>{mb(stats.total_bytes)}</strong></div>
   <div className="metric"><span>Оригинали в Storage</span><strong>{fmt(stats.stored_files)}</strong></div>
+  <div className="metric"><span>Обработени файлове</span><strong>{fmt(stats.extracted_files)}</strong></div>
+  <div className="metric"><span>Текст за преглед</span><strong>{fmt(stats.readable_files)}</strong></div>
+  <div className="metric"><span>Неподдържан формат</span><strong>{fmt(stats.unsupported_files)}</strong></div>
+  <div className="metric"><span>Грешка при четене</span><strong>{fmt(stats.error_files)}</strong></div>
  </div>
- <div className="notice warn">Архивно име не е доказателство за потвърдена фирма или действащо медицинско заключение. Файловете не се свързват автоматично със служител.</div>
+ <div className="notice warn">Архивно име не е доказателство за потвърдена фирма или действащо медицинско заключение. Извлеченият текст се съхранява шифрован и не се приема за потвърдено медицинско заключение. Файловете не се свързват автоматично със служител.</div>
  <section className="table-panel"><div className="section-heading"><div><h2>Папки и източници</h2><p>{filtered.length} групи с документи</p></div></div>
  <form className="searchbar" method="get"><input aria-label="Търси папка" type="search" name="q" maxLength={80} placeholder="Потърси папка…" defaultValue={sp.q||''}/><button className="btn primary">Търси</button></form>
  <div className="table-wrap"><table><thead><tr><th>Източник от MEGA</th><th>Документи</th><th>Обем</th><th>Преглед</th></tr></thead><tbody>

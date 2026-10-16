@@ -1,0 +1,4 @@
+# CTM v0.19 — encrypted MEGA extraction staging
+A worker reads original MEGA source files and sends at most 4,000 characters of text per supported source through a short-lived authenticated ingestion job. The database encrypts plaintext immediately using the existing archive Vault key. The staging table is private, protected by RLS, and has no anon or authenticated direct table grants. Idempotent primary keys prevent repeated extraction rows. No extracted text, medical records, MEGA keys, or credentials belong in GitHub.
+
+Statuses: parsed, truncated (partial text), empty, error, unsupported. A parsed document is **not** a confirmed worker, employer or clinical conclusion. Large DOC files, RAR/ZIP and images require other dedicated extractors or OCR and a separate evidence-verification process. The source originals remain in MEGA.
