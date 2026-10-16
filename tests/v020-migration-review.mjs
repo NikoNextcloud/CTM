@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const sql=read('supabase/migrations/20261016225000_migration_review_queue_v020.sql');
+const ui=read('src/app/(protected)/app/migration/review/page.tsx');
+for(const token of ['ENABLE ROW LEVEL SECURITY','REVOKE ALL','requires_evidence','NOT EXISTS','ON CONFLICT DO NOTHING','role=\'admin\'','auth.uid()'])assert.ok(sql.includes(token),token);
+assert.match(ui,/ctx\.role!=='admin'/);
+assert.match(ui,/ctm_migration_review_queue_summary/);
+assert.doesNotMatch(sql+ui,/ctm_archive_key_v1|medical_diagnosis\s*=/);
+console.log('CTM migration review queue security: PASS');

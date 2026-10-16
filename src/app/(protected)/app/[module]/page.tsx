@@ -43,7 +43,7 @@ export default async function ModulePage({params,searchParams}:Props){const {mod
    </div>
    <PendingCompanyCandidates compact/>
    <div className="table-panel"><h2>Служители и медицински данни от архив</h2><p>Импорт на XLSX с ЕГН, ТЕЛК, длъжности и допълнителни колони, с проверка преди запис.</p><Link className="btn primary" href="/app/migration/personnel">Отвори импорта на реални служители →</Link></div>
-   <div className="table-panel"><h2>Инвентаризация и файлови източници</h2><Link className="btn primary" href="/app/migration/mega">Документи от MEGA →</Link></div>
+   <div className="table-panel"><h2>Инвентаризация и файлови източници</h2><Link className="btn primary" href="/app/migration/mega">Документи от MEGA →</Link></div><div className="table-panel"><h2>Контрол на цялостната миграция</h2><p>Отделен списък за непотвърдените фирми и архивни служители, без автоматично създаване на действащи правоотношения.</p><Link className="btn primary" href="/app/migration/review">Отвори проверките за миграция →</Link></div>
    <MigrationSourceForm/>
   </>}
  {employeeResult?.error&&<div className="notice warn">Не могат да се заредят служителите за избора.</div>}
