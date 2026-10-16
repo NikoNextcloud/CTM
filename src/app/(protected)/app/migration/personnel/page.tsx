@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import {getContext} from '@/lib/session';
 import {ArchivePersonnelImporter} from '@/components/archive-personnel-importer';
+import {EmsPersonCandidateImporter} from '@/components/ems-person-candidate-importer';
 
 export const dynamic='force-dynamic';
 type Props={searchParams:Promise<{page?:string}>};
@@ -39,6 +40,9 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
    свързват с потвърдените работодатели. Не се активират автоматично.</p>
   </div>
   <ArchivePersonnelImporter/>
+  <details className="add-panel"><summary>EMS-STM · импортирай 1013 аналитични кандидата за лица</summary>
+   <EmsPersonCandidateImporter/>
+  </details>
   <section className="table-panel">
    <div className="section-heading"><div>
     <h2>Архивни служители ({list.total||0}) · преглед и редакция</h2>
