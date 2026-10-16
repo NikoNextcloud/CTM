@@ -144,7 +144,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
    <h1>Импорт / Експорт</h1><p>CSV и Excel: избор на лист, съпоставяне на колони, проверка и потвърждение.</p></div>
    <span className="tag">Работна версия</span>
   </div>
-  <div className="notice warn">За ЕГН, ТЕЛК, диагнози и медицински бележки използвай поверителното досие на служителя. Този общ CSV/XLSX импорт пренася само административни колони; медицинските колони не се изпращат през него. Пълният архивен медицински импорт ще бъде отделна функция.</div>
+  <div className="notice"><strong>Импорт на реални служители с ЕГН и медицински сведения:</strong> <Link className="company-link" href="/app/migration/personnel">Отвори защитения XLSX импорт →</Link><p>Тази страница остава за административен CSV/XLSX обмен. За служители от EMS-STM, ТЕЛК, личен лекар и архивни медицински бележки използвай специализирания архивен импорт с проверка и шифроване.</p></div>
   <section className="table-panel transfer-panel">
    <h2>Регистър и файлов формат</h2>
    <label>Регистър <select value={resource} onChange={e=>change(e.target.value)}>

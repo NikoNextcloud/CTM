@@ -6,6 +6,7 @@ import {CompanyForm} from '@/components/company-form';
 import {EmployeeForm} from '@/components/employee-form';
 import {RiskForm} from '@/components/risk-form';
 import {PendingCompanyCandidates} from '@/components/pending-company-candidates';
+import {ArchivedPersonnelPeek} from '@/components/archived-personnel-peek';
 import {ExaminationForm,SickLeaveForm,DocumentMetadataForm,MigrationSourceForm} from '@/components/register-forms';
 export const dynamic='force-dynamic';
 type Props={params:Promise<{module:string}>;searchParams:Promise<{q?:string;page?:string}>};
@@ -28,7 +29,7 @@ export default async function ModulePage({params,searchParams}:Props){const {mod
  const {data,count,error}=await read.order('created_at',{ascending:false}).order('id').range((page-1)*25,page*25-1);
  // Dynamic table names prevent Supabase from inferring the selected record type.
  const rows=(data||[]) as unknown as Record<string,unknown>[];
- return <div className="content">{canWrite&&['companies','employees','risks','worksites','job-positions'].includes(m.id)&&<div className="transfer-actions"><Link className="btn ghost" href={'/app/data-transfer?resource='+encodeURIComponent(transferResource)}>⇧ Импорт CSV / XLSX</Link><Link className="btn primary" href={'/api/export?resource='+encodeURIComponent(transferResource)}>⇩ Експорт CSV</Link></div>}<div className="page-header"><div><Link href="/app" className="back">← Табло</Link><p className="eyebrow">РЕГИСТЪР</p><h1>{m.title}</h1><p>{m.subtitle}</p></div><span className="tag">{count??0} записа в регистъра</span></div>{m.id==='companies'&&ctx.role==='admin'&&<PendingCompanyCandidates/>}{m.id==='companies'&&['admin','specialist'].includes(ctx.role)&&<CompanyForm/>}{m.id==='employees'&&canWrite&&<EmployeeForm companies={companies}/>}{m.id==='risks'&&canWrite&&<RiskForm companies={companies}/>}{m.id==='examinations'&&ctx.role==='doctor'&&<ExaminationForm employees={availableEmployees}/>}
+ return <div className="content">{canWrite&&['companies','employees','risks','worksites','job-positions'].includes(m.id)&&<div className="transfer-actions"><Link className="btn ghost" href={'/app/data-transfer?resource='+encodeURIComponent(transferResource)}>⇧ Импорт CSV / XLSX</Link><Link className="btn primary" href={'/api/export?resource='+encodeURIComponent(transferResource)}>⇩ Експорт CSV</Link></div>}<div className="page-header"><div><Link href="/app" className="back">← Табло</Link><p className="eyebrow">РЕГИСТЪР</p><h1>{m.title}</h1><p>{m.subtitle}</p></div><span className="tag">{count??0} записа в регистъра</span></div>{m.id==='companies'&&ctx.role==='admin'&&<PendingCompanyCandidates/>}{m.id==='employees'&&ctx.role==='admin'&&<ArchivedPersonnelPeek/>}{m.id==='companies'&&['admin','specialist'].includes(ctx.role)&&<CompanyForm/>}{m.id==='employees'&&canWrite&&<EmployeeForm companies={companies}/>}{m.id==='risks'&&canWrite&&<RiskForm companies={companies}/>}{m.id==='examinations'&&ctx.role==='doctor'&&<ExaminationForm employees={availableEmployees}/>}
  {m.id==='sick-leaves'&&ctx.role==='doctor'&&<SickLeaveForm employees={availableEmployees}/>}
  {m.id==='documents'&&['admin','specialist','doctor'].includes(ctx.role)&&
   <DocumentMetadataForm role={ctx.role} companies={companies} employees={availableEmployees}/>}
@@ -39,6 +40,8 @@ export default async function ModulePage({params,searchParams}:Props){const {mod
     <Link className="btn primary" href="/app/migration/companies">Отвори кандидатите за фирми →</Link>
    </div>
    <PendingCompanyCandidates compact/>
+   <div className="table-panel"><h2>Служители и медицински данни от архив</h2><p>Импорт на XLSX с ЕГН, ТЕЛК, длъжности и допълнителни колони, с проверка преди запис.</p><Link className="btn primary" href="/app/migration/personnel">Отвори импорта на реални служители →</Link></div>
+   <div className="table-panel"><h2>Инвентаризация и файлови източници</h2><Link className="btn ghost" href="/app/migration/archive">Отвори архивния опис →</Link></div>
    <MigrationSourceForm/>
   </>}
  {employeeResult?.error&&<div className="notice warn">Не могат да се заредят служителите за избора.</div>}
