@@ -54,7 +54,7 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
      <tbody>{rows.map(person=><tr key={person.id}>
       <td>{person.label}</td><td>{person.secondary||'Няма доказана фирма'}</td>
       <td>{person.source.slice(0,18)}…</td>
-      <td><Link className="company-link" href={'/app/migration/archive/'+person.id}>Преглед / редакция →</Link></td>
+      <td><Link className="company-link" href={'/app/migration/archive/'+person.id}>Преглед</Link> · <Link className="btn ghost" href={'/app/migration/archive/'+person.id+'#archive-edit'}>✎ Редактирай</Link></td>
      </tr>)}</tbody>
     </table></div>}
    <nav className="pagination" aria-label="Страници архивни служители">

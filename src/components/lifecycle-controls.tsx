@@ -1,6 +1,7 @@
 'use client';
 
-import {useActionState} from 'react';
+import {useActionState,useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 import {
  changeCompanyLifecycle,changeEmployeeLifecycle,type LifecycleState
 } from '@/lib/lifecycle-actions';
@@ -44,6 +45,8 @@ export function EmployeeLifecycleControls({id,revision,status}:{
  id:string;revision:number;status:string
 }){
  const [state,action,pending]=useActionState(changeEmployeeLifecycle,initial);
+ const router=useRouter();
+ useEffect(()=>{if(state.ok)router.refresh();},[state,router]);
  const archived=status==='archived';
  return <section className="ctm-action-card" aria-label="Действия по служителя">
   <div className="ctm-action-header"><div>

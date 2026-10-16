@@ -1,5 +1,6 @@
 'use client';
-import { useActionState } from 'react';
+import { useActionState,useEffect,useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import {
  editCompany,editEmployee,editWorksite,editPosition,editEmploymentPeriod,editRisk,
  type EditState
@@ -34,14 +35,18 @@ export function EditCompanyPanel({company}:{company:Company}){
 type Employee={id:string;revision:number;full_name:string;job_title:string;reference_code:string};
 export function EditEmployeePanel({employee}:{employee:Employee}){
  const [state,action,pending]=useActionState(editEmployee,initial);
+ const router=useRouter();
+ const form=useRef<HTMLFormElement>(null);
+ useEffect(()=>{if(state.ok)router.refresh();},[state,router]);
  return <details id="employee-edit" open className="add-panel edit-panel ctm-employee-edit-panel"><summary className="ctm-edit-trigger">✎ Редактирай служителя — имена, длъжност и служебен номер</summary>
-  <form action={action} className="detail-edit-form">
+  <form ref={form} action={action} className="detail-edit-form">
    <input type="hidden" name="id" value={employee.id}/>
    <input type="hidden" name="revision" value={employee.revision}/>
    <label>Име<input name="full_name" defaultValue={employee.full_name} required minLength={3} maxLength={200}/></label>
    <label>Длъжност<input name="job_title" defaultValue={employee.job_title} maxLength={150}/></label>
    <label>Вътрешен номер<input name="reference_code" defaultValue={employee.reference_code} maxLength={80}/></label>
-   <button className="btn primary" disabled={pending}>{pending?'Записване…':'Запази промените'}</button>
+   <div className="ctm-edit-actions"><button className="btn primary" disabled={pending}>{pending?'Записване…':'Запази промените'}</button>
+   <button className="btn ghost" type="reset" disabled={pending} onClick={()=>form.current?.reset()}>Откажи</button></div>
   </form><Feedback {...state}/>
  </details>;
 }
