@@ -8,9 +8,9 @@ export function EmployeeForm({ companies }: { companies: Company[] }) {
       <label>Фирма<select name="company_id" required>{companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
       <label>Име на служителя<input name="full_name" maxLength={200} minLength={3} required placeholder="Име Презиме Фамилия" /></label>
       <label>Длъжност<input name="job_title" maxLength={150} placeholder="Длъжност" /></label>
-      <label>Вътрешен номер<input name="reference_code" maxLength={80} placeholder="Код без ЕГН" /></label>
+      <label>Вътрешен номер<input name="reference_code" maxLength={80} placeholder="Вътрешен служебен код" /></label>
       <button className="btn primary" type="submit">Запиши</button>
     </form>}
-    <p className="subnote">ЕГН и медицински сведения не се въвеждат в административния регистър. За тях е необходим отделен защитен процес.</p>
+    <p className="subnote">След записване се отваря досието на служителя, където администраторът или лекарят може да попълни ЕГН, ТЕЛК, диагнози и медицински бележки в шифровани полета.</p>
   </details>;
 }

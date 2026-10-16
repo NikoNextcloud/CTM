@@ -1,6 +1,7 @@
 'use client';
 
 import {useState,useTransition} from 'react';
+import Link from 'next/link';
 import {CSV_FORMATS,IMPORT_LIMIT_BYTES,parseCsv,isTransferResource,type TransferResource,type ImportIssue} from '@/lib/import-csv';
 import {
  describeSheet,inspectWorkbook,mapWorkbookSheet,fieldLabels,type WorkbookSheet,type ColumnMap
@@ -143,7 +144,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
    <h1>Импорт / Експорт</h1><p>CSV и Excel: избор на лист, съпоставяне на колони, проверка и потвърждение.</p></div>
    <span className="tag">Работна версия</span>
   </div>
-  <div className="notice warn">Тази среда все още не е одобрена за прехвърляне на ЕГН, ТЕЛК, диагнози и медицински архиви. Допълнителните колони на Excel се анализират локално и не се изпращат при административния импорт. Сървърът засега приема единствено синтетични записи.</div>
+  <div className="notice warn">За ЕГН, ТЕЛК, диагнози и медицински бележки използвай поверителното досие на служителя. Този общ CSV/XLSX импорт пренася само административни колони; медицинските колони не се изпращат през него. Пълният архивен медицински импорт ще бъде отделна функция.</div>
   <section className="table-panel transfer-panel">
    <h2>Регистър и файлов формат</h2>
    <label>Регистър <select value={resource} onChange={e=>change(e.target.value)}>
@@ -234,7 +235,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
   <section className="table-panel transfer-panel">
    <h2>Преминаване към архивна миграция</h2>
    <p>Медицинските архиви изискват отделен защитен канал, проверка на източника и права на достъп. Този екран вече може да направи локална структурна проверка на многолистови Excel файлове.</p>
-   <a className="btn ghost" href="/app/migration">Отвори регистъра за миграция →</a>
+   <Link className="btn ghost" href="/app/migration">Отвори регистъра за миграция →</Link>
   </section>
  </div>;
 }

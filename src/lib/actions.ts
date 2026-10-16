@@ -10,7 +10,8 @@ const {error}=await ctx.supabase.from('companies').insert({tenant_id:ctx.tenant,
 revalidatePath('/app/companies');redirect('/app/companies');}
 
 
-// Administrative-only staff register, deliberately excludes EGN and medical fields.
+// The core employee register holds employment data. Confidential fields are
+// available on the employee detail page through encrypted restricted RPCs.
 const Employee = z.object({
   company_id: z.string().uuid(),
   full_name: z.string().trim().min(3).max(200),
@@ -28,14 +29,14 @@ export async function createEmployee(fd: FormData) {
   const firm = await ctx.supabase.from('companies').select('id')
     .eq('tenant_id', ctx.tenant).eq('id', parsed.data.company_id).maybeSingle();
   if (firm.error || !firm.data) throw new Error('Няма достъп до избраната фирма');
-  const {error} = await ctx.supabase.from('employees').insert({
+  const {data, error} = await ctx.supabase.from('employees').insert({
     tenant_id: ctx.tenant, company_id: parsed.data.company_id,
     full_name: parsed.data.full_name, job_title: parsed.data.job_title,
     reference_code: parsed.data.reference_code, current_status: 'pending'
-  });
+  }).select('id').single();
   if (error) throw new Error('Записването на служителя не е разрешено');
   revalidatePath('/app/employees');
-  redirect('/app/employees');
+  redirect(data?.id?'/app/employees/'+data.id:'/app/employees');
 }
 
 const Risk = z.object({

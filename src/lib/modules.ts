@@ -1,7 +1,7 @@
 export type ModuleId = 'companies'|'employees'|'worksites'|'job-positions'|'risks'|'examinations'|'sick-leaves'|'documents'|'migration'|'team'|'reports';
 export const modules: {id:ModuleId;title:string;subtitle:string;table?:string;columns?:{key:string;label:string}[]}[] = [
  {id:'companies',title:'Фирми',subtitle:'Обслужвани работодатели',table:'companies',columns:[{key:'name',label:'Наименование'},{key:'eik',label:'ЕИК'},{key:'status',label:'Статус'}]},
- {id:'employees',title:'Служители',subtitle:'Регистър и трудови позиции без ЕГН',table:'employees',columns:[{key:'full_name',label:'Име'},{key:'job_title',label:'Длъжност'},{key:'reference_code',label:'Вътрешен номер'}]},
+ {id:'employees',title:'Служители',subtitle:'Регистър на персонала и защитени поверителни досиета',table:'employees',columns:[{key:'full_name',label:'Име'},{key:'job_title',label:'Длъжност'},{key:'reference_code',label:'Вътрешен номер'}]},
  {id:'worksites',title:'Работни обекти',subtitle:'Регистър на обектите по работодател',table:'worksites',columns:[{key:'name',label:'Наименование'},{key:'address',label:'Адрес'},{key:'active',label:'Активен'}]},
  {id:'job-positions',title:'Длъжности',subtitle:'Длъжности и организационни звена',table:'job_positions',columns:[{key:'title',label:'Длъжност'},{key:'department',label:'Отдел'},{key:'active',label:'Активна'}]},
  {id:'risks',title:'Оценка на риска',subtitle:'Работни рискове и защитни мерки (проект)',table:'risk_assessments',columns:[{key:'workplace',label:'Работно място'},{key:'hazard',label:'Опасност'},{key:'risk_level',label:'Ниво'},{key:'review_due',label:'Преглед'},{key:'status',label:'Статус'}]},

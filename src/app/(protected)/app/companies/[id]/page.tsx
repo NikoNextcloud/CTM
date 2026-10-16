@@ -68,7 +68,7 @@ export default async function CompanyWorkspace({params,searchParams}:Props){
    <p>ЕИК / БУЛСТАТ: {company.eik} · {company.status}</p>
    <p>{company.address||'Адрес не е въведен'}{company.activity?' · '+company.activity:''}</p>
   </div><span className="tag">v0.9 · работна версия</span></div>
-  <div className="notice warn">ЕГН и медицински сведения не се обработват в това административно досие. Трудовите периоди се въвеждат като непотвърдени и се проверяват ръчно срещу документи с проследимо основание.</div>
+  <div className="notice warn">ЕГН и медицинските сведения се попълват в поверителния раздел на досието на съответния служител. Трудовите периоди остават непотвърдени до сверяване с документи.</div>
   {allErrors&&<div className="notice warn">Някои списъци не могат да бъдат заредени. Провери правата си.</div>}
   {canWrite&&<EditCompanyPanel company={company}/>}
   <section className="metrics company-detail-metrics">
