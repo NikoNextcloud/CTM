@@ -34,7 +34,7 @@ export function EditCompanyPanel({company}:{company:Company}){
 type Employee={id:string;revision:number;full_name:string;job_title:string;reference_code:string};
 export function EditEmployeePanel({employee}:{employee:Employee}){
  const [state,action,pending]=useActionState(editEmployee,initial);
- return <details className="add-panel edit-panel"><summary className="ctm-edit-trigger">✎ Редактирай служителя — имена, длъжност и служебен номер</summary>
+ return <details id="employee-edit" open className="add-panel edit-panel ctm-employee-edit-panel"><summary className="ctm-edit-trigger">✎ Редактирай служителя — имена, длъжност и служебен номер</summary>
   <form action={action} className="detail-edit-form">
    <input type="hidden" name="id" value={employee.id}/>
    <input type="hidden" name="revision" value={employee.revision}/>

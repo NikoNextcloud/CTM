@@ -2,7 +2,7 @@ import Link from 'next/link';
 import {getContext} from '@/lib/session';
 import {CompanyCandidateImport} from '@/components/company-candidate-import';
 import {
- CompanyCandidateReview,type CompanyCandidate
+ CompanyCandidateReview,type CompanyCandidate,type PublicResearch
 } from '@/components/company-candidate-review';
 
 export const dynamic='force-dynamic';
@@ -36,6 +36,17 @@ export default async function CompanyCandidatePage({searchParams}:Props){
   const normalized=String(row.normalized_name||'').trim().toLowerCase();
   if(normalized)duplicatesByName.set(normalized,(duplicatesByName.get(normalized)||0)+1);
  }
+ const researchIds=rows.map(x=>x.id);
+ const researchResponse=researchIds.length?
+  await ctx.supabase.from('ctm_company_research')
+   .select('candidate_id,proposed_eik,public_name,public_city,source_url,research_state,comment')
+   .eq('tenant_id',ctx.tenant).in('candidate_id',researchIds):null;
+ const researchById=new Map<string,PublicResearch>(
+   ((researchResponse?.data||[]) as PublicResearch[]).map(x=>[x.candidate_id,x])
+ );
+ const researchStats=await ctx.supabase.from('ctm_company_research')
+  .select('candidate_id,research_state',{count:'exact'})
+  .eq('tenant_id',ctx.tenant).eq('research_state','suggested');
  const count=result.count??0;
  const link=(nextPage:number,nextStatus=status)=>{
   const query=new URLSearchParams({status:nextStatus,page:String(nextPage)});
@@ -56,6 +67,12 @@ export default async function CompanyCandidatePage({searchParams}:Props){
    и е защитено срещу повторение. Реални медицински записи не се пренасят от този екран.
   </div>
 
+  <div className="ctm-company-research-summary">
+   <strong>Публично проучване за фирмите</strong>
+   <p>{researchStats.count??0} архивни кандидата имат предложен ЕИК с източник.
+    Всички предложения изискват потвърждаване на официалния ЕИК и юридическото лице.
+    Сходни имена, променени правни форми и архивни папки не се приемат автоматично за едно дружество.</p>
+  </div>
   <CompanyCandidateImport/>
 
   <section className="table-panel transfer-panel">
@@ -84,6 +101,7 @@ export default async function CompanyCandidatePage({searchParams}:Props){
    :<div className="candidate-list">{rows.map(candidate=><CompanyCandidateReview
       key={candidate.id} candidate={candidate}
       duplicateCount={duplicatesByName.get((candidate.normalized_name||'').trim().toLowerCase())||1}
+      research={researchById.get(candidate.id)}
     />)}</div>}
   <nav className="pagination" aria-label="Страници на кандидатите">
    <span>Страница {page} · общо {count} кандидата</span>

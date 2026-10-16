@@ -28,7 +28,7 @@ export async function ArchivedPersonnelPeek({compact=false}:{compact?:boolean}){
    <tbody>{rows.map(row=><tr key={row.id}>
     <td>{row.label}</td>
     <td>{row.secondary||'Неустановена'}</td>
-    <td><Link href={'/app/migration/archive/'+row.id}>Преглед →</Link></td>
+    <td><Link href={'/app/migration/archive/'+row.id}>Преглед / редакция →</Link></td>
    </tr>)}</tbody>
   </table></div>}
   {count>rows.length&&<div className="overview-footer">Показани {rows.length} от {count} архивни служители</div>}

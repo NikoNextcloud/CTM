@@ -12,10 +12,11 @@ export type CompanyCandidate={
  review_status:string;eik:string|null;review_note:string;
  promoted_company_id:string|null;
 };
+export type PublicResearch={candidate_id:string;proposed_eik:string|null;public_name:string;public_city:string;source_url:string;research_state:string;comment:string};
 const initial:CandidateReviewState={ok:false,message:''};
 
-export function CompanyCandidateReview({candidate,duplicateCount}:{
- candidate:CompanyCandidate;duplicateCount:number
+export function CompanyCandidateReview({candidate,duplicateCount,research}:{
+ candidate:CompanyCandidate;duplicateCount:number;research?:PublicResearch
 }){
  const [verifiedState,verificationAction,verifying]=useActionState(promoteCandidate,initial);
  const [flagState,flagAction,flagging]=useActionState(flagCandidate,initial);
@@ -28,6 +29,23 @@ export function CompanyCandidateReview({candidate,duplicateCount}:{
    <div className="ctm-candidate-state"><span className="tag">{candidate.review_status==='pending'?'За потвърждение':candidate.review_status==='verified'?'Потвърдена':candidate.review_status==='excluded'?'Изключена':'Конфликт'}</span></div>
   </div>
   {suggestion&&<p className="subnote">ЕИК, предложен във файла: <strong>{suggestion}</strong> · изисква официална проверка</p>}
+  {research&&<div className="ctm-research-panel">
+   <div className="ctm-research-heading">
+    <strong>{research.research_state==='suggested'?'Намерен публичен кандидат за ЕИК':
+      research.research_state==='ambiguous'?'Няколко възможни фирми':'ЕИК още не е установен еднозначно'}</strong>
+    <span className="tag">Не е потвърдено</span>
+   </div>
+   {research.proposed_eik&&<p><strong>Предложен ЕИК: {research.proposed_eik}</strong>
+     {research.public_city&&' · '+research.public_city}</p>}
+   <p className="subnote">{research.comment}</p>
+   <div className="ctm-research-links">
+    {research.source_url&&<a href={research.source_url} target="_blank" rel="noopener noreferrer">
+      Публичен източник ↗</a>}
+    <a href={'https://www.google.com/search?q='+encodeURIComponent('"'+candidate.name+'" ЕИК')} target="_blank" rel="noopener noreferrer">
+      Потърси по наименование ↗</a>
+    <a href="https://portal.registryagency.bg/" target="_blank" rel="noopener noreferrer">Официален регистър ↗</a>
+   </div>
+  </div>}
   <p className="subnote">Достоверност на разпознаване: {candidate.confidence}
    {duplicateCount>1?' · '+duplicateCount+' кандидата с подобно име':''}</p>
   {duplicateCount>1&&<div className="notice warn">
@@ -53,7 +71,7 @@ export function CompanyCandidateReview({candidate,duplicateCount}:{
      <input type="hidden" name="candidate_id" value={candidate.id}/>
      <label>ЕИК/БУЛСТАТ (9 или 13 цифри, с контролна проверка)
       <input name="eik" inputMode="numeric" pattern="[0-9]{9}([0-9]{4})?"
-       placeholder="Потвърден идентификатор" defaultValue={candidate.eik||suggestion} required maxLength={13}/>
+       placeholder="Потвърден идентификатор" defaultValue={candidate.eik||research?.proposed_eik||suggestion} required maxLength={13}/>
      </label>
      <label>Потвърдено наименование (въведи изписването отгоре)
       <input name="confirmed_name" required minLength={2} maxLength={200}

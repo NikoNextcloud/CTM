@@ -3,10 +3,11 @@ import {notFound,redirect} from 'next/navigation';
 import {getContext} from '@/lib/session';
 import {ArchivedRecordDetails} from '@/components/archived-record-details';
 import {ArchiveEmployeeLinker,type VerifiedCompany} from '@/components/archive-employee-linker';
+import {ArchiveEmployeeEditor} from '@/components/archive-employee-editor';
 
 export const dynamic='force-dynamic';
 type Props={params:Promise<{id:string}>};
-type RecordData={id:string;kind:string;source:string;row:number;data:Record<string,unknown>};
+type RecordData={id:string;kind:string;source:string;row:number;data:Record<string,unknown>;revision?:number;has_correction?:boolean};
 
 export default async function ArchiveRecordPage({params}:Props){
  const {id}=await params;
@@ -14,7 +15,9 @@ export default async function ArchiveRecordPage({params}:Props){
   notFound();
  const ctx=await getContext();
  if(!ctx.tenant||ctx.role!=='admin')notFound();
- const {data,error}=await ctx.supabase.rpc('ctm_archive_get',{p_record:id});
+ const source=await ctx.supabase.rpc('ctm_archive_get',{p_record:id});
+ const isEmployee=!!source.data&&(source.data as RecordData).kind==='employee_sample';
+ const {data,error}=isEmployee?await ctx.supabase.rpc('ctm_archive_employee_current',{p_record:id}):source;
  if(error||!data)notFound();
  const record=data as RecordData;
  // Legacy technical MEGA extension counts must not masquerade as dossiers.
@@ -49,7 +52,7 @@ export default async function ArchiveRecordPage({params}:Props){
    <h1>{isPerson?String(record.data['Име Презиме Фамилия']||'Непознат служител'):
     'Архивен запис №'+record.row}</h1>
    <p>Източник: {record.source.slice(0,26)}… · ред {record.row}</p>
-  </div><span className="tag">{linkedEmployeeId?'Свързан · за проверка':'Непотвърден'}</span></div>
+  </div><div className="ctm-detail-actions">{isPerson&&!linkedEmployeeId&&<a className="btn primary" href="#archive-edit">✎ Редактирай служителя</a>}<span className="tag">{linkedEmployeeId?'Свързан · за проверка':'Непотвърден'}</span></div></div>
   <div className="notice warn">Архивът е доказателство за произход, не потвърждение
    на трудов статус или окончателно медицинско заключение.</div>
   {linkedEmployeeId&&<section className="ctm-action-card">
@@ -58,10 +61,12 @@ export default async function ArchiveRecordPage({params}:Props){
    <Link className="btn primary" href={'/app/employees/'+linkedEmployeeId}>
     Отвори служебното и защитеното медицинско досие →</Link>
   </section>}
+  {isPerson&&!linkedEmployeeId&&<ArchiveEmployeeEditor archiveId={id} data={record.data} revision={record.revision||0}/>}
   {isPerson&&!linkedEmployeeId&&<ArchiveEmployeeLinker
    archiveId={id}
    archiveCompany={String(record.data['Фирма']||'')}
    companies={companies}/>}
+  {isPerson&&record.has_correction&&<div className="notice">Досието съдържа проверими редакции (версия {record.revision}). Първоначалният архив остава непроменен.</div>}
   <ArchivedRecordDetails data={record.data||{}}/>
  </div>;
 }

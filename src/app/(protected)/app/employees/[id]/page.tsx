@@ -23,12 +23,12 @@ export default async function EmployeeDetail({params}:Props){
   <Link href="/app/employees" className="back">← Служители</Link>
   <div className="page-header"><div><p className="eyebrow">СЛУЖЕБЕН РЕГИСТЪР · ДОСИЕ НА СЛУЖИТЕЛ</p>
    <h1>{data.full_name}</h1><p>Длъжност: {data.job_title||'—'} · Вътрешен номер: {data.reference_code||'—'}</p>
-  </div><span className="tag">{data.current_status==='pending'?'Статус: непотвърден':data.current_status}</span></div>
+  </div><div className="ctm-detail-actions">{canEdit&&<a className="btn primary" href="#employee-edit">✎ Редактирай служителя</a>}<span className="tag">{data.current_status==='pending'?'Статус: непотвърден':data.current_status}</span></div></div>
   <p><Link href={'/app/companies/'+data.company_id} className="company-link">Отвори фирменото досие →</Link></p>
   <p className="subnote">Статусът на този запис не доказва действащо трудово правоотношение. Поверителните полета имат отделни права и одит.</p>
+  {canEdit&&<EditEmployeePanel employee={data}/>}
   {canClinical&&(clinical?.error?<div className="notice warn" role="alert">Поверителните полета не могат да се заредят. Провери конфигурацията и достъпа до базата.</div>
    :<EmployeeClinicalPanel employeeId={id} record={clinicalRecord||{revision:0}}/>)}
-  {canEdit&&<EditEmployeePanel employee={data}/>}
   {ctx.role==='admin'&&<EmployeeLifecycleControls id={data.id} revision={data.revision} status={data.current_status}/>}
  </div>;
 }

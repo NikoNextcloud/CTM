@@ -161,3 +161,32 @@
 .ctm-import-clarity strong{color:#125d64}
 @media(max-width:1100px){.candidate-list{grid-template-columns:1fr}}
 @media(max-width:660px){.ctm-action-card{padding:16px}.ctm-action-form{align-items:stretch;flex-direction:column}.ctm-action-form button{width:100%}.ctm-approval-form{flex-direction:column;align-items:stretch}.ctm-import-step{flex:1 1 100%;justify-content:flex-start}}
+
+
+/* CTM v0.17 — visible employee editing and sourced company research */
+.ctm-detail-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ctm-employee-edit-panel{scroll-margin-top:25px;border:1px solid #badcd7;background:#fff;box-shadow:0 6px 18px rgba(13,61,71,.04)}
+.ctm-employee-edit-panel>summary{border-radius:9px;min-height:42px}
+.ctm-archive-editor{scroll-margin-top:24px;border:1px solid #bfdedb}
+.ctm-archive-editor .ctm-action-header>div{flex:1}
+.ctm-archive-editor .ctm-action-header>button{flex-shrink:0}
+.ctm-archive-edit-form{padding-top:20px;margin-top:14px;border-top:1px solid #e2ebef}
+.ctm-archive-edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px 18px}
+.ctm-archive-edit-grid label{min-width:0;display:flex;flex-direction:column;gap:7px;color:#305466;font-size:12px;font-weight:750}
+.ctm-archive-edit-grid input,.ctm-archive-edit-grid textarea{width:100%;min-width:0;padding:11px 12px;color:#233d4d;background:#fff;border:1px solid #d2e0e5;border-radius:9px;font:inherit;font-size:13px;font-weight:400;line-height:1.45}
+.ctm-archive-edit-grid input:focus,.ctm-archive-edit-grid textarea:focus{outline:2px solid #b7dfdc;border-color:#0a797e}
+.ctm-archive-edit-grid small{color:#806951;font-size:10px;font-weight:500}
+.ctm-archive-field-wide{grid-column:1/-1}
+.ctm-edit-provenance{margin:18px 0;padding:12px 14px;border:1px solid #dce8ec;background:#f5f9fb;border-radius:9px;overflow-wrap:anywhere;color:#637c8b;font-size:11px;line-height:1.65}
+.ctm-edit-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 0}
+.ctm-archive-edit-form>.checkbox-line{font-size:12px;line-height:1.6;display:flex;align-items:center;gap:9px}
+.ctm-company-research-summary{background:#ecf7f4;border:1px solid #c8e5df;border-radius:13px;padding:17px 20px;margin:14px 0 20px;color:#2b5962}
+.ctm-company-research-summary strong{display:block;font-size:15px;color:#18535b;margin:0 0 6px}
+.ctm-company-research-summary p{font-size:12px;line-height:1.65;margin:0}
+.ctm-research-panel{background:#f5f9fb;border:1px solid #d7e5eb;border-radius:12px;padding:13px 16px;margin:12px 0}
+.ctm-research-heading{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px}
+.ctm-research-heading strong{font-size:12px;color:#234c5d}
+.ctm-research-panel p{margin:5px 0;font-size:12px;line-height:1.5}
+.ctm-research-links{display:flex;flex-wrap:wrap;gap:8px 13px;padding-top:8px}
+.ctm-research-links a{font-size:11px;color:#087982;font-weight:700;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:700px){.ctm-detail-actions{align-items:stretch;flex-direction:column}.ctm-archive-edit-grid{grid-template-columns:1fr}.ctm-archive-editor .ctm-action-header{flex-direction:column;align-items:stretch}.ctm-archive-editor .ctm-action-header>button{width:100%}.ctm-edit-actions>*{flex:1}}

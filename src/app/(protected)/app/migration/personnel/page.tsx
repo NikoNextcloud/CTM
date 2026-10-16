@@ -41,8 +41,8 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
   <ArchivePersonnelImporter/>
   <section className="table-panel">
    <div className="section-heading"><div>
-    <h2>Вече внесени архивни служители ({list.total||0})</h2>
-    <p>Това са действително записаните в защитената база редове, а не само
+    <h2>Архивни служители ({list.total||0}) · преглед и редакция</h2>
+    <p>Отвори всеки служител за редакция на административните и медицинските полета с история на промените. Това са действително записаните в защитената база редове, а не само
      намерени във файл данни.</p></div>
     <Link href="/app/migration/archive" className="btn ghost">Всички архивни категории →</Link>
    </div>
@@ -54,7 +54,7 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
      <tbody>{rows.map(person=><tr key={person.id}>
       <td>{person.label}</td><td>{person.secondary||'Няма доказана фирма'}</td>
       <td>{person.source.slice(0,18)}…</td>
-      <td><Link className="company-link" href={'/app/migration/archive/'+person.id}>Отвори досие →</Link></td>
+      <td><Link className="company-link" href={'/app/migration/archive/'+person.id}>Преглед / редакция →</Link></td>
      </tr>)}</tbody>
     </table></div>}
    <nav className="pagination" aria-label="Страници архивни служители">
