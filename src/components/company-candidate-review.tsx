@@ -19,13 +19,15 @@ export function CompanyCandidateReview({candidate,duplicateCount}:{
 }){
  const [verifiedState,verificationAction,verifying]=useActionState(promoteCandidate,initial);
  const [flagState,flagAction,flagging]=useActionState(flagCandidate,initial);
+ const suggestion=candidate.review_note.match(/ЕИК от CSV \(непотвърден\): ([0-9]{9}(?:[0-9]{4})?)/u)?.[1]||'';
  const finalized=['verified','excluded'].includes(candidate.review_status);
  return <article className="table-panel candidate-card">
   <div className="candidate-top">
    <div><h3>{candidate.name}</h3>
     <p className="subnote">Източник: {candidate.source_kind} · {candidate.source_label}</p></div>
-   <div><span className="tag">{candidate.review_status}</span></div>
+   <div className="ctm-candidate-state"><span className="tag">{candidate.review_status==='pending'?'За потвърждение':candidate.review_status==='verified'?'Потвърдена':candidate.review_status==='excluded'?'Изключена':'Конфликт'}</span></div>
   </div>
+  {suggestion&&<p className="subnote">ЕИК, предложен във файла: <strong>{suggestion}</strong> · изисква официална проверка</p>}
   <p className="subnote">Достоверност на разпознаване: {candidate.confidence}
    {duplicateCount>1?' · '+duplicateCount+' кандидата с подобно име':''}</p>
   {duplicateCount>1&&<div className="notice warn">
@@ -39,8 +41,8 @@ export function CompanyCandidateReview({candidate,duplicateCount}:{
    <p className="subnote">ЕИК: {candidate.eik||'не е посочен'}.
     Основание: {candidate.review_note||'липсва'}</p>
   </>:<>
-   <details className="add-panel">
-    <summary>Провери ЕИК и потвърди фирмата</summary>
+   <details className="add-panel ctm-candidate-review">
+    <summary className="ctm-review-trigger">✓ Провери ЕИК и потвърди фирмата</summary>
     <p className="subnote">
      Провери ЕИК, правната форма и наименованието в официалния регистър или първичен договор.
      След потвърждаване новият фирмен запис остава НЕАКТИВЕН, докато договорният статус не е проверен.
@@ -51,7 +53,7 @@ export function CompanyCandidateReview({candidate,duplicateCount}:{
      <input type="hidden" name="candidate_id" value={candidate.id}/>
      <label>ЕИК/БУЛСТАТ (9 или 13 цифри, с контролна проверка)
       <input name="eik" inputMode="numeric" pattern="[0-9]{9}([0-9]{4})?"
-       placeholder="Потвърден идентификатор" required maxLength={13}/>
+       placeholder="Потвърден идентификатор" defaultValue={candidate.eik||suggestion} required maxLength={13}/>
      </label>
      <label>Потвърдено наименование (въведи изписването отгоре)
       <input name="confirmed_name" required minLength={2} maxLength={200}
@@ -72,8 +74,8 @@ export function CompanyCandidateReview({candidate,duplicateCount}:{
      </p>}
     </form>
    </details>
-   <details className="add-panel">
-    <summary>Отбележи конфликт или изключи</summary>
+   <details className="add-panel ctm-candidate-review">
+    <summary className="ctm-review-trigger ctm-review-trigger-muted">Изключи / отбележи конфликт</summary>
     <form action={flagAction} className="candidate-review-form">
      <input type="hidden" name="candidate_id" value={candidate.id}/>
      <label>Решение<select name="resolution" defaultValue="conflict">

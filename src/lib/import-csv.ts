@@ -11,19 +11,18 @@ export const IMPORT_LIMIT_ROWS=100;
 export type ImportIssue={row:number;message:string};
 const RESOURCES=new Set<string>(Object.keys(CSV_FORMATS));
 export function isTransferResource(x:string):x is TransferResource{return RESOURCES.has(x);}
-const testName=(s:string)=>/^(test|тест)[ _-]/iu.test(s);
-const testEik=(s:string)=>/^000000[0-9]{3}$/.test(s);
+const validEik=(s:string)=>/^[0-9]{9}([0-9]{4})?$/.test(s);
 const ISO=/^\d{4}-\d{2}-\d{2}$/;
 function validDate(value:string){return ISO.test(value)&&!Number.isNaN(Date.parse(value));}
 function validate(x:Record<string,string>,r:TransferResource,row:number,issues:ImportIssue[]){
  const fail=(message:string)=>issues.push({row,message});
  if(r==='companies'){
-  if(!testName(x.name)||x.name.length<3||x.name.length>200)fail('Само синтетични ТЕСТ/TEST фирми.');
-  if(!testEik(x.eik))fail('Тестов ЕИК трябва да е във формат 000000XXX.');
+  if(x.name.length<2||x.name.length>200)fail('Невалидно наименование на фирмата.');
+  if(!validEik(x.eik))fail('ЕИК трябва да съдържа 9 или 13 цифри. Официалното съвпадение се потвърждава след импорта.');
   if(x.address.length>300||!['active','inactive','archived'].includes(x.status))fail('Невалиден адрес или статус.');
  }else{
-  if(!testEik(x.company_eik))fail('Фирмата трябва да има тестов код 000000XXX.');
-  if(r==='employees'&&(!testName(x.full_name)||x.full_name.length>200||x.job_title.length>150||!x.reference_code||x.reference_code.length>80))fail('Разрешени са само синтетични служители.');
+  if(!validEik(x.company_eik))fail('Фирмата трябва да има ЕИК с 9 или 13 цифри.');
+  if(r==='employees'&&(x.full_name.length<3||x.full_name.length>200||x.job_title.length>150||x.reference_code.length>80))fail('Невалидно име, длъжност или вътрешен номер на служителя.');
   if(r==='worksites'&&(x.name.length<2||x.name.length>200||x.address.length>300||!['true','false'].includes(x.active)))fail('Невалидни данни за обект.');
   if(r==='job_positions'&&(x.title.length<2||x.title.length>200||x.department.length>200||!['true','false'].includes(x.active)))fail('Невалидни данни за длъжност.');
   if(r==='risk_assessments'){

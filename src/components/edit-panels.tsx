@@ -13,12 +13,12 @@ type Company={id:string;revision:number;name:string;eik:string;address:string;st
  activity:string;contact_email:string;contact_phone:string;contract_reference:string};
 export function EditCompanyPanel({company}:{company:Company}){
  const [state,action,pending]=useActionState(editCompany,initial);
- return <details className="add-panel edit-panel"><summary>Редактирай фирмата</summary>
+ return <details className="add-panel edit-panel"><summary className="ctm-edit-trigger">✎ Редактирай фирмата — ЕИК, адрес, контакти и статус</summary>
   <form action={action} className="detail-edit-form">
    <input type="hidden" name="id" value={company.id}/>
    <input type="hidden" name="revision" value={company.revision}/>
    <label>Наименование<input name="name" defaultValue={company.name} required minLength={2} maxLength={200}/></label>
-   <label>ЕИК / БУЛСТАТ<input name="eik" defaultValue={company.eik} required pattern="[0-9]{9,13}"/></label>
+   <label>ЕИК / БУЛСТАТ<input name="eik" defaultValue={company.eik} required inputMode="numeric" pattern="[0-9]{9}([0-9]{4})?" maxLength={13}/></label>
    <label>Адрес<input name="address" defaultValue={company.address} maxLength={300}/></label>
    <label>Дейност<input name="activity" defaultValue={company.activity} maxLength={300}/></label>
    <label>Контактeн имейл<input name="contact_email" type="email" defaultValue={company.contact_email} maxLength={254}/></label>
@@ -34,7 +34,7 @@ export function EditCompanyPanel({company}:{company:Company}){
 type Employee={id:string;revision:number;full_name:string;job_title:string;reference_code:string};
 export function EditEmployeePanel({employee}:{employee:Employee}){
  const [state,action,pending]=useActionState(editEmployee,initial);
- return <details className="add-panel edit-panel"><summary>Редактирай служителя</summary>
+ return <details className="add-panel edit-panel"><summary className="ctm-edit-trigger">✎ Редактирай служителя — имена, длъжност и служебен номер</summary>
   <form action={action} className="detail-edit-form">
    <input type="hidden" name="id" value={employee.id}/>
    <input type="hidden" name="revision" value={employee.revision}/>

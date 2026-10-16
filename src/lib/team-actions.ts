@@ -38,11 +38,11 @@ export async function inviteMember(_previous: State, data: FormData): Promise<St
 
   const result = await ctx.supabase.rpc('ctm_manage_member', {
     p_tenant: ctx.tenant, p_user: userId, p_role: input.data.role,
-    p_active: true, p_company_ids: companyIds
+    p_active: false, p_company_ids: companyIds
   });
   if (result.error) return { ok: false, message: 'Базата отказа присвояването. Провери фирмите и ролята.' };
   revalidatePath('/app/team');
-  return { ok: true, message: 'Потребителят вече има настроен достъп до организацията.' };
+  return { ok: true, message: 'Акаунтът е добавен без активен достъп. Натисни „Потвърди достъпа“, за да го разрешиш.' };
 }
 
 export async function updateMember(_previous: State, data: FormData): Promise<State> {
@@ -67,4 +67,46 @@ export async function updateMember(_previous: State, data: FormData): Promise<St
   if (result.error) return { ok: false, message: 'Промяната е отказана от защитата на базата. Провери правата и избраните фирми.' };
   revalidatePath('/app/team');
   return { ok: true, message: 'Правата са записани успешно.' };
+}
+
+
+// Explicit access approval never creates/deletes Supabase Authentication users.
+export async function changeMemberApproval(
+ _previous:State,data:FormData
+):Promise<State>{
+ const ctx=await getContext();
+ if(!ctx.tenant||ctx.role!=='admin')
+  return {ok:false,message:'Нужни са администраторски права.'};
+ const parsed=z.object({
+  userId:z.string().uuid(),
+  operation:z.enum(['approve','deactivate']),
+  acknowledged:z.literal('yes')
+ }).safeParse({
+  userId:data.get('user_id'),
+  operation:data.get('operation'),
+  acknowledged:data.get('acknowledged')
+ });
+ if(!parsed.success)return{ok:false,message:'Потвърди действието.'};
+ const {userId,operation}=parsed.data;
+ if(userId===ctx.user.id)
+  return{ok:false,message:'Не можеш да спреш или промениш собствените си администраторски права оттук.'};
+ const member=await ctx.supabase.from('tenant_members')
+  .select('role,active').eq('tenant_id',ctx.tenant).eq('user_id',userId).maybeSingle();
+ if(member.error||!member.data)
+  return{ok:false,message:'Потребителят не е член на тази организация.'};
+ const access=await ctx.supabase.from('company_access').select('company_id')
+  .eq('tenant_id',ctx.tenant).eq('user_id',userId).limit(100);
+ if(access.error)return{ok:false,message:'Не могат да се проверят достъпите по фирми.'};
+ const companies=[...new Set((access.data||[]).map(a=>a.company_id))];
+ if(operation==='approve'&&member.data.role==='employer'&&!companies.length)
+  return{ok:false,message:'Задай поне една фирма на работодателя, преди да потвърдиш достъпа.'};
+ const result=await ctx.supabase.rpc('ctm_manage_member',{
+  p_tenant:ctx.tenant,p_user:userId,p_role:member.data.role,
+  p_active:operation==='approve',p_company_ids:companies
+ });
+ if(result.error)return{ok:false,message:'Сървърът отказа промяната. Провери фирмените права и одита.'};
+ revalidatePath('/app/team');
+ return{ok:true,message:operation==='approve'
+  ?'Достъпът до CTM е потвърден. Supabase имейлът се управлява отделно.'
+  :'Достъпът до CTM е деактивиран. Акаунтът в Supabase Authentication е запазен.'};
 }

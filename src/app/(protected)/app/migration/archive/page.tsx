@@ -4,14 +4,10 @@ export const dynamic='force-dynamic';
 
 const categories=[
  ['employee_sample','Архивни служители'],
- ['file_manifest','Опис на файлове'],
  ['person_candidate','Лица от документи'],
  ['contract_person','Лица от договори'],
- ['identifier','Идентификатори'],
- ['date_reference','Дати от архиви'],
- ['folder_summary','MEGA — файлове по тип'],
- ['source_company','Фирми от източници'],
- ['source_issue','Несъответствия']
+ ['source_company','Фирмени архиви'],
+ ['source_issue','Записи за сверяване']
 ] as const;
 type Props={searchParams:Promise<{kind?:string;page?:string}>};
 type Entry={id:string;source:string;row:number;label:string;secondary:string};
@@ -24,7 +20,7 @@ export default async function ArchiveRegister({searchParams}:Props){
  </div>;
  const sp=await searchParams;
  const valid=categories.find(x=>x[0]===sp.kind);
- const kind=valid?.[0]||'folder_summary';
+ const kind=valid?.[0]||'employee_sample';
  const page=Math.max(1,Math.min(10000,Math.floor(Number(sp.page)||1)));
  const pageSize=25;
  const [statsResult,listResult]=await Promise.all([
@@ -36,12 +32,6 @@ export default async function ArchiveRegister({searchParams}:Props){
  const stats=(statsResult.data||{}) as Record<string,number>;
  const list=(listResult.data||{total:0,rows:[],kind}) as PageResult;
  const rows=Array.isArray(list.rows)?list.rows:[];
- // Only the aggregate MEGA inventory needs decrypted file-extension labels.
- const summary=kind==='folder_summary'&&!listResult.error?
-  await Promise.all(rows.map(async row=>{
-   const r=await ctx.supabase.rpc('ctm_archive_get',{p_record:row.id});
-   return !r.error?(r.data as {data?:{extension?:string;file_count?:number}})?.data:null;
-  })):null;
  const link=(k:string,p:number)=>
   '/app/migration/archive?'+new URLSearchParams({kind:k,page:String(p)});
  return <div className="content">
@@ -53,10 +43,7 @@ export default async function ArchiveRegister({searchParams}:Props){
      Архивните хора и документи не се смесват с потвърдените регистри.</p>
    </div>
   </div>
-  <div className="notice warn">
-   8 650 файла в MEGA са преброени, но това не означава 8 650 внесени документа.
-   Категориите отдолу показват точно колко записа са съхранени в Supabase.
-  </div>
+  <div className="notice">Само архивни досиета и източници за сверяване. Ненужната техническа статистика е скрита.</div>
   <p><Link className="btn primary" href="/app/migration/personnel">
    Импорт на реални служители от XLSX →</Link></p>
   {statsResult.error||listResult.error?
@@ -68,7 +55,7 @@ export default async function ArchiveRegister({searchParams}:Props){
     </Link>)}</div>
     <section className="table-panel">
      <div className="section-heading"><div>
-      <h2>{valid?.[1]||'MEGA — файлове по тип'}</h2>
+      <h2>{valid?.[1]||'Архивни служители'}</h2>
       <p>Общо {list.total||0} архивни записа, показани {rows.length}.</p>
      </div></div>
      {rows.length===0?<div className="empty"><h3>В тази категория няма внесени редове</h3>
@@ -76,11 +63,9 @@ export default async function ArchiveRegister({searchParams}:Props){
        докато не е записан успешно тук.</p></div>:
       <div className="table-wrap"><table>
        <thead><tr><th>Запис / разширение</th><th>Източник / брой</th><th>Досие</th></tr></thead>
-       <tbody>{rows.map((row,i)=><tr key={row.id}>
-        <td>{kind==='folder_summary'?summary?.[i]?.extension||'Неизвестен тип':row.label}</td>
-        <td>{kind==='folder_summary'?
-         Number(summary?.[i]?.file_count||0).toLocaleString('bg-BG'):
-         row.secondary||row.source}</td>
+       <tbody>{rows.map(row=><tr key={row.id}>
+        <td>{row.label}</td>
+        <td>{row.secondary||row.source}</td>
         <td><Link className="company-link" href={'/app/migration/archive/'+row.id}>
          Преглед →</Link></td>
        </tr>)}</tbody>

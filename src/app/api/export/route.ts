@@ -23,8 +23,10 @@ export async function GET(request:NextRequest){
  const companyCodes=new Map<string,string>();
  let count=0;
  for(let page=0;page<=LIMIT/PAGE;page++){
-  const result=await ctx.supabase.from(resource).select(FIELDS[resource])
-   .eq('tenant_id',ctx.tenant).order('id').range(page*PAGE,page*PAGE+PAGE-1);
+  const query=ctx.supabase.from(resource).select(FIELDS[resource]).eq('tenant_id',ctx.tenant);
+  if(resource==='employees')query.neq('current_status','archived');
+  if(resource==='companies')query.neq('status','archived');
+  const result=await query.order('id').range(page*PAGE,page*PAGE+PAGE-1);
   if(result.error)return response('Export failed',500);
   const records=(result.data??[]) as unknown as Record<string,unknown>[];
   if(count+records.length>LIMIT)return response('Export limit: 5000 rows',413);

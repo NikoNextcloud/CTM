@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getContext } from '@/lib/session';
 import { createWorksite, createJobPosition, createEmploymentPeriod } from '@/lib/organization-actions';
 import { EditCompanyPanel,EditWorksitePanel,EditPositionPanel,EditPeriodPanel } from '@/components/edit-panels';
+import {CompanyLifecycleControls} from '@/components/lifecycle-controls';
 import { reviewEmploymentPeriod } from '@/lib/employment-review-actions';
 export const dynamic='force-dynamic';
 
@@ -67,10 +68,11 @@ export default async function CompanyWorkspace({params,searchParams}:Props){
    <p className="eyebrow">ФИРМЕНО ДОСИЕ · АДМИНИСТРАТИВЕН РЕГИСТЪР</p><h1>{company.name}</h1>
    <p>ЕИК / БУЛСТАТ: {company.eik} · {company.status}</p>
    <p>{company.address||'Адрес не е въведен'}{company.activity?' · '+company.activity:''}</p>
-  </div><span className="tag">v0.9 · работна версия</span></div>
+  </div><span className="tag">{company.status==='archived'?'Архивирана фирма':company.status==='inactive'?'Неактивна фирма':'Активна фирма'}</span></div>
   <div className="notice warn">ЕГН и медицинските сведения се попълват в поверителния раздел на досието на съответния служител. Трудовите периоди остават непотвърдени до сверяване с документи.</div>
   {allErrors&&<div className="notice warn">Някои списъци не могат да бъдат заредени. Провери правата си.</div>}
   {canWrite&&<EditCompanyPanel company={company}/>}
+  {ctx.role==='admin'&&<CompanyLifecycleControls id={company.id} revision={company.revision} status={company.status}/>}
   <section className="metrics company-detail-metrics">
    <div className="metric"><span>Обекти</span><strong>{sites.error?'—':counts.sites}</strong></div>
    <div className="metric"><span>Длъжности</span><strong>{positions.error?'—':counts.positions}</strong></div>

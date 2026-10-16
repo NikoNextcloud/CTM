@@ -115,23 +115,36 @@ export function ArchivePersonnelImporter(){
   }finally{setBusy(false)}
  }
  return <section className="table-panel transfer-panel">
-  <h2>Импортирай служители и медицински сведения от Excel</h2>
+  <div className="ctm-import-steps" aria-label="Стъпки за импорт">
+   <span className="ctm-import-step"><b>1</b> Избери Excel</span>
+   <span className="ctm-import-step"><b>2</b> Провери данните</span>
+   <span className="ctm-import-step"><b>3</b> Запиши и прегледай</span>
+  </div>
+  <h2>Импортирай служители от Excel</h2>
   <p>Служебните, личните и медицинските колони се съхраняват заедно с произхода
    си в <strong>шифрования архив</strong>. Нищо не се изпраща към публичен GitHub
    или към регистъра на потвърдените служители без допълнително сверяване.</p>
-  <label>1. Избери оригиналния Excel файл (.xlsx)
+  <label>1. Избери Excel файл (.xlsx)
    <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     disabled={busy} onChange={e=>{void chooseFile(e.currentTarget.files?.[0]);e.currentTarget.value='';}}/>
   </label>
   {sheet&&mapping&&<>
    <p className="subnote">Файл: {fileName} · {sheets?.length||0} листа.
     Открит ред със заглавия: {headerRow+1}.</p>
-   <label>2. Избери работен лист
+   <label>Работен лист
     <select value={sheetIndex} disabled={busy}
      onChange={e=>selectSheet(Number(e.target.value))}>
      {sheets?.map((x,i)=><option key={i} value={i}>{x.sheet} · {x.data.length} реда</option>)}
     </select>
    </label>
+   <label>Фирма от оригиналния източник (използва се, ако няма фирмена колона)
+    <input value={company} disabled={busy} maxLength={200}
+     placeholder="Наименование на фирма според оригиналния Excel"
+     onChange={e=>{setCompany(e.target.value);invalidate()}}/>
+   </label>
+   <details className="ctm-advanced-mapping">
+    <summary>Промени автоматично разпознатите колони (само ако е необходимо)</summary>
+    <p className="subnote">По подразбиране полетата са съпоставени автоматично. При грешка отвори този раздел.</p>
    <label>Ред със заглавия в Excel
     <input type="number" min={1} max={Math.min(100,sheet.data.length)}
      value={headerRow+1} disabled={busy} onChange={e=>{
@@ -140,12 +153,7 @@ export function ArchivePersonnelImporter(){
        selectSheet(sheetIndex,index);
      }}/>
    </label>
-   <label>Фирма от оригиналния източник (използва се, ако няма фирмена колона)
-    <input value={company} disabled={busy} maxLength={200}
-     placeholder="Наименование на фирма според оригиналния Excel"
-     onChange={e=>{setCompany(e.target.value);invalidate()}}/>
-   </label>
-   <h3>3. Съпоставяне на колони</h3>
+   <h3>Съпоставяне на колони</h3>
    <p className="subnote">Можеш да промениш всяка колона. ЕГН, ТЕЛК, личен лекар,
     диагнози и бележки се запазват, а не се изхвърлят.</p>
    <div className="transfer-map-grid">
@@ -159,13 +167,14 @@ export function ArchivePersonnelImporter(){
      </select></label>
     </div>)}
    </div>
-   <button className="btn ghost" type="button" onClick={preview} disabled={busy}>
-    4. Провери файла и покажи резултат
+   </details>
+   <button className="btn primary" type="button" onClick={preview} disabled={busy}>
+    2. Провери разпознатите данни
    </button>
   </>}
   {prepared&&<>
    <div className="notice">
-    <strong>Разпознати архивни редове: {prepared.rows.length}</strong>
+    <strong>2. Проверени редове: {prepared.rows.length}</strong>
     <p>Без работен номер: {prepared.missingWorkNumbers}.
      Без ЕГН: {prepared.missingEGNs}.
      Възможни повтарящи се лица: {prepared.duplicateCandidatePairs}.</p>
@@ -196,7 +205,7 @@ export function ArchivePersonnelImporter(){
     </label>
     <button type="button" className="btn primary" disabled={!confirmed||busy}
      onClick={()=>{void importRecords()}}>
-     {busy?'Записване на архива…':'5. Импортирай '+prepared.rows.length+' архивни служители'}
+     {busy?'Записване на архива…':'3. Запиши '+prepared.rows.length+' архивни служители'}
     </button>
    </>}
   </>}
@@ -204,7 +213,7 @@ export function ArchivePersonnelImporter(){
   {error&&<div role="alert" className="notice warn">{error}</div>}
   {success&&<div role="status" className="team-status-ok">{success}
    <p><Link className="btn ghost" href="/app/migration/archive?kind=employee_sample">
-    Виж импортираните служители →</Link></p>
+    Виж архивните служители →</Link></p>
   </div>}
  </section>;
 }

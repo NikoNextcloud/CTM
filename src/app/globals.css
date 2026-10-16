@@ -119,3 +119,45 @@
 .overview-table-wrap{overflow-x:auto}.overview-table{width:100%;border-collapse:collapse;table-layout:fixed}.overview-table th{padding:10px 15px;background:#f5f8fa;color:#788d9a;font-size:10px;text-align:left;letter-spacing:.04em}.overview-table td{padding:10px 15px;border-top:1px solid #ecf0f3;color:#304f60;font-size:12px;line-height:1.4;overflow-wrap:anywhere}.overview-table tr:hover td{background:#f8fbfc}.overview-table a{color:#087980;font-weight:650}.overview-table th:first-child{width:48%}
 .overview-footer{border-top:1px solid #ecf0f3;padding:10px 16px;font-size:11px;color:#748999}.dashboard-metric-status{display:block;font-size:11px;color:#0b797e;margin-top:6px;line-height:1.4}
 @media(max-width:1250px){.dashboard-overviews{grid-template-columns:1fr}}@media(max-width:650px){.overview-head{flex-direction:column;align-items:flex-start}.overview-action{width:100%;text-align:center}.overview-table td,.overview-table th{padding:10px}}
+
+
+/* CTM v0.16 — accessible actions, review workflow and medical/archive controls */
+.ctm-action-card{margin:18px 0;padding:22px;background:#fff;border:1px solid #dee9ec;border-radius:15px;box-shadow:0 4px 18px rgba(10,42,56,.035)}
+.ctm-action-header{display:flex;align-items:flex-start;gap:20px;justify-content:space-between}
+.ctm-action-header h2{font-size:19px;margin:5px 0 6px;color:#16384b}
+.ctm-action-header p:not(.eyebrow){font-size:12px;color:#667f8b;line-height:1.6;max-width:700px}
+.ctm-action-form{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-top:15px}
+.ctm-action-form .checkbox-line{flex-basis:100%;display:flex;align-items:center;gap:10px;margin:2px 0 8px;font-size:12px;line-height:1.5}
+.ctm-action-form .checkbox-line input{accent-color:#087e80;flex-shrink:0}
+.btn.ctm-danger{background:#fff7f5;border:1px solid #f0ccc7;color:#a43831}
+.btn.ctm-danger:hover{background:#ffece8;border-color:#dbaca5}
+.ctm-edit-trigger{display:flex;align-items:center;gap:10px;font-weight:800;color:#087b80}
+.ctm-edit-trigger:hover{color:#09656a}
+.ctm-approval-form{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #eaf0f2}
+.ctm-approval-form .checkbox-line{flex:1 1 330px;display:flex;align-items:center;gap:9px;line-height:1.45;font-size:12px;color:#59727c}
+.ctm-approval-form .checkbox-line input{accent-color:#087e80}
+.ctm-approval-form>button{flex-shrink:0}
+.ctm-approval-form>p{flex-basis:100%}
+.candidate-card{padding:18px 20px!important;min-width:0}
+.candidate-top h3{font-size:16px;margin-bottom:5px}
+.ctm-candidate-state{white-space:nowrap}
+.candidate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:14px}
+.ctm-candidate-review{margin:10px 0!important}
+.ctm-review-trigger{display:block;padding:11px 14px!important;background:#ecf8f7;border:1px solid #c4e1df;border-radius:9px;color:#087a7d;font-size:12px;font-weight:800;cursor:pointer}
+.ctm-review-trigger:hover{background:#e1f3f0}
+.ctm-review-trigger-muted{background:#f8fafb;color:#607984;border-color:#e2eaee}
+.ctm-candidate-review[open]>.ctm-review-trigger{border-radius:9px 9px 0 0}
+.ctm-import-steps{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 22px}
+.ctm-import-step{display:flex;gap:9px;align-items:center;padding:10px 14px;background:#f4faf9;color:#265660;border:1px solid #d4eae7;border-radius:10px;font-size:12px;font-weight:750}
+.ctm-import-step b{display:grid;place-items:center;width:23px;height:23px;background:#0b7f83;color:white;border-radius:50%;font-size:11px}
+.ctm-advanced-mapping{margin:16px 0;border-radius:11px;background:#f8fafc;border:1px solid #dae5e8;padding:14px}
+.ctm-advanced-mapping>summary{cursor:pointer;font-size:13px;font-weight:800;color:#087a80}
+.ctm-advanced-mapping[open]{background:#fff}
+.ctm-advanced-mapping[open]>summary{margin-bottom:14px}
+.ctm-advanced-mapping .transfer-map-grid{margin:10px 0 14px}
+.ctm-advanced-mapping .transfer-map-row label{font-size:12px}
+.ctm-advanced-mapping select,.ctm-advanced-mapping input{max-width:100%}
+.ctm-import-clarity{padding:16px 18px;background:#eef8f7;border-radius:12px;border:1px solid #cfe7e4;color:#386773;margin-bottom:16px;font-size:12px;line-height:1.65}
+.ctm-import-clarity strong{color:#125d64}
+@media(max-width:1100px){.candidate-list{grid-template-columns:1fr}}
+@media(max-width:660px){.ctm-action-card{padding:16px}.ctm-action-form{align-items:stretch;flex-direction:column}.ctm-action-form button{width:100%}.ctm-approval-form{flex-direction:column;align-items:stretch}.ctm-import-step{flex:1 1 100%;justify-content:flex-start}}

@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation';
 import {getContext} from '@/lib/session';
 import {EditEmployeePanel} from '@/components/edit-panels';
 import {EmployeeClinicalPanel,type ClinicalRecord} from '@/components/employee-clinical-panel';
+import {EmployeeLifecycleControls} from '@/components/lifecycle-controls';
 export const dynamic='force-dynamic';
 type Props={params:Promise<{id:string}>};
 const uuid=(s:string)=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
@@ -28,5 +29,6 @@ export default async function EmployeeDetail({params}:Props){
   {canClinical&&(clinical?.error?<div className="notice warn" role="alert">Поверителните полета не могат да се заредят. Провери конфигурацията и достъпа до базата.</div>
    :<EmployeeClinicalPanel employeeId={id} record={clinicalRecord||{revision:0}}/>)}
   {canEdit&&<EditEmployeePanel employee={data}/>}
+  {ctx.role==='admin'&&<EmployeeLifecycleControls id={data.id} revision={data.revision} status={data.current_status}/>}
  </div>;
 }

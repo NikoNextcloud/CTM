@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { inviteMember, updateMember } from '@/lib/team-actions';
+import { inviteMember, updateMember, changeMemberApproval } from '@/lib/team-actions';
 
 type Member = { user_id: string; email: string | null; role: string; active: boolean };
 type Company = { id: string; name: string; eik: string };
@@ -40,13 +40,14 @@ function InviteForm({ companies }: { companies: Company[] }) {
 
 function MemberRow({ member, ownUserId, companies, selected }: { member: Member; ownUserId: string; companies: Company[]; selected: string[] }) {
   const [state, action, pending] = useActionState(updateMember, initial);
+  const [approvalState, approvalAction, approving] = useActionState(changeMemberApproval, initial);
   const isSelf = member.user_id === ownUserId;
   return <div className="team-member"><div className="team-member-head"><div>
     <strong>{member.email || 'Няма записан имейл'}</strong>
     <p>{isSelf ? 'Твоят акаунт · ' : ''}{member.active ? 'Активен достъп' : 'Достъпът е спрян'}</p>
   </div><span className={'team-pill ' + (member.active ? 'is-active' : 'is-inactive')}>{member.role}</span></div>
     {isSelf ? <p className="muted team-self-note">За защита не можеш да премахнеш собствените си администраторски права.</p> :
-      <form action={action} className="team-form">
+      <><form action={action} className="team-form">
         <input type="hidden" name="user_id" value={member.user_id} />
         <div className="team-form-grid">
           <label>Роля<select name="role" defaultValue={member.role}>{roles.map(([v, name]) => <option key={v} value={v}>{name}</option>)}</select></label>
@@ -55,7 +56,18 @@ function MemberRow({ member, ownUserId, companies, selected }: { member: Member;
         <CompanyChoices companies={companies} selected={selected} />
         <button disabled={pending} className="btn ghost" type="submit">{pending ? 'Записване…' : 'Запази права'}</button>
         {state.message && <p role="status" className={state.ok ? 'team-status-ok' : 'team-status-error'}>{state.message}</p>}
-      </form>}
+      </form>
+      <form action={approvalAction} className="ctm-approval-form">
+       <input type="hidden" name="user_id" value={member.user_id}/>
+       <input type="hidden" name="operation" value={member.active?'deactivate':'approve'}/>
+       <label className="checkbox-line"><input type="checkbox" name="acknowledged" value="yes" required/>
+        {member.active?'Потвърждавам спирането на достъпа до CTM. Данните и акаунтът в Supabase остават.':'Проверих ролята и фирмените права на този потребител.'}
+       </label>
+       <button className={member.active?'btn ctm-danger':'btn primary'} type="submit" disabled={approving}>
+        {approving?'Обработка…':member.active?'Изтрий достъпа / деактивирай':'Потвърди достъпа'}
+       </button>
+       {approvalState.message&&<p role="status" className={approvalState.ok?'team-status-ok':'team-status-error'}>{approvalState.message}</p>}
+      </form></>}
   </div>;
 }
 
@@ -67,6 +79,7 @@ export function TeamManager({ ownUserId, members, companies, access }: { ownUser
       {members.length ? members.map(member => <MemberRow key={member.user_id} member={member} ownUserId={ownUserId} companies={companies} selected={access.filter(x => x.user_id === member.user_id).map(x => x.company_id)} />) :
         <p className="muted">Няма добавени потребители.</p>}
     </section>
+    <div className="notice">„Потвърди достъпа“ активира членството в CTM. „Изтрий достъпа“ го деактивира, без да заличава Supabase Auth потребителя, журналите или медицинските сведения.</div>
     <div className="notice">СТМ 2.0 не създава акаунти и не изпраща покани. Потребителите се създават само ръчно в <strong>Supabase → Authentication → Users</strong>. Действията с роли се записват в одитния регистър.</div>
   </div>;
 }

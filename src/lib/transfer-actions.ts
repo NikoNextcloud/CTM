@@ -24,7 +24,7 @@ export async function previewNonClinicalImport(resource:string,raw:string):Promi
  return{ok:parsed.issues.length===0,rowCount:parsed.rows.length,
   sha256:parsed.issues.length===0?checksum(resource,raw):'',
   sample:parsed.rows.slice(0,5),issues:parsed.issues,
-  message:parsed.issues.length===0?'Файлът е проверен. Прегледай редовете и потвърди.':'Има грешки; не е записано нищо.'};
+  message:parsed.issues.length===0?(resource==='companies'?'Файлът е проверен. Фирмите ще бъдат добавени за проверка на ЕИК, не като активни работодатели.':'Файлът е проверен. За свързаните записи е нужна вече потвърдена фирма.'):'Има грешки; не е записано нищо.'};
 }
 export async function executeNonClinicalImport(resource:string,raw:string,reviewedHash:string):Promise<ImportResult>{
  const ctx=await authorized();
@@ -40,10 +40,11 @@ export async function executeNonClinicalImport(resource:string,raw:string,review
  });
  if(error){
   return{ok:false,rows:0,message:error.code==='23505'?
-   'Повторен импорт на този пакет е блокиран.':
-   'Базата отказа импорта. Провери ограниченията на текущия импорт, фирмените кодове, колоните и правата.'};
+   'Повторен пакет или възможен дубликат. Нищо от този пакет не е записано.':error.code==='23503'?
+   'ЕИК на фирмата още не е потвърден в регистъра. Първо потвърди фирмата.':
+   'Импортът е отказан. Провери формата, правата и избраните фирми; не е записан частичен пакет.'};
  }
  revalidatePath('/app');
- for(const p of ['companies','employees','risks','data-transfer'])revalidatePath('/app/'+p);
- return{ok:true,rows:Number(data)||parsed.rows.length,message:'Импортът е записан като една транзакция, с одит и защита от повторение.'};
+ for(const p of ['companies','employees','risks','data-transfer','migration/companies'])revalidatePath('/app/'+p);
+ return{ok:true,rows:Number(data)||parsed.rows.length,message:resource==='companies'?'Фирмените имена са внесени за проверка на ЕИК. След потвърждаване ще се появят в основния регистър.':'Записите са съхранени в една транзакция към потвърдени фирми, с контрол на дубликатите.'};
 }

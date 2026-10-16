@@ -12,13 +12,6 @@ const labels:Record<TransferResource,string>={
  companies:'Фирми',employees:'Служители',worksites:'Работни обекти',
  job_positions:'Длъжности',risk_assessments:'Проекти на оценка на риска'
 };
-const examples:Record<TransferResource,string>={
- companies:'ТЕСТ Пример ЕООД;000000001;Адрес;active',
- employees:'000000001;ТЕСТ Служител;Оператор;EX-001',
- worksites:'000000001;Административен офис;Адрес;true',
- job_positions:'000000001;Оператор;Звено;true',
- risk_assessments:'000000001;Офис;Ергономичен риск;low;Ергономични мерки;2026-10-15;'
-};
 type Preview={ok:boolean;rowCount:number;sha256:string;sample:Record<string,string>[];issues:ImportIssue[];message:string};
 const xlsxLimit=2*1024*1024;
 
@@ -38,7 +31,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
  const [message,setMessage]=useState('');
  const [busy,start]=useTransition();
  const columns=CSV_FORMATS[resource];
- const template='\uFEFF'+columns.join(';')+'\r\n'+examples[resource]+'\r\n';
+ const template='\uFEFF'+columns.join(';')+'\r\n';
  const activeSheet=workbook?.[sheetIndex];
  const profile=activeSheet?describeSheet(activeSheet,sheetIndex,resource,headerRow):null;
  const summary=workbook?inspectWorkbook(workbook,resource):[];
@@ -144,7 +137,7 @@ export function TransferManager({initialResource='companies'}:{initialResource?:
    <h1>Импорт / Експорт</h1><p>CSV и Excel: избор на лист, съпоставяне на колони, проверка и потвърждение.</p></div>
    <span className="tag">Работна версия</span>
   </div>
-  <div className="notice"><strong>Импорт на реални служители с ЕГН и медицински сведения:</strong> <Link className="company-link" href="/app/migration/personnel">Отвори защитения XLSX импорт →</Link><p>Тази страница остава за административен CSV/XLSX обмен. За служители от EMS-STM, ТЕЛК, личен лекар и архивни медицински бележки използвай специализирания архивен импорт с проверка и шифроване.</p></div>
+  <div className="notice"><strong>За поверителни служители и медицински XLSX:</strong> <Link className="company-link" href="/app/migration/personnel">Отвори защитения XLSX импорт →</Link><p>Тази страница остава за административен CSV/XLSX обмен. За служители от EMS-STM, ТЕЛК, личен лекар и архивни медицински бележки използвай специализирания архивен импорт с проверка и шифроване.</p></div>
   <section className="table-panel transfer-panel">
    <h2>Регистър и файлов формат</h2>
    <label>Регистър <select value={resource} onChange={e=>change(e.target.value)}>

@@ -32,10 +32,11 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
    </div>
    <span className="tag">Архив · {stats.employee_sample||0} записа</span>
   </div>
-  <div className="notice warn">
-   Архивните записи са отделени от регистъра на действащите служители. Когато
+  <div className="ctm-import-clarity">
+   <strong>Как работи импортът?</strong> Избери Excel → прегледай автоматично разпознатите колони → провери броя редове → запиши в защитения архив.
+   <p>Архивните записи са отделени от регистъра на действащите служители. Когато
    ЕИК и принадлежността към фирма са проверени, досиетата могат да се
-   свързват с потвърдените работодатели. Не се активират автоматично.
+   свързват с потвърдените работодатели. Не се активират автоматично.</p>
   </div>
   <ArchivePersonnelImporter/>
   <section className="table-panel">
