@@ -46,6 +46,7 @@ export function CompanyCandidateReview({candidate,duplicateCount,research}:{
     <a href="https://portal.registryagency.bg/" target="_blank" rel="noopener noreferrer">Официален регистър ↗</a>
    </div>
   </div>}
+  <p className="subnote"><Link className="company-link" href={'/app/migration/mega?q='+encodeURIComponent(candidate.name)}>Документи от MEGA по това име →</Link> · името не доказва ЕИК.</p>
   <p className="subnote">Достоверност на разпознаване: {candidate.confidence}
    {duplicateCount>1?' · '+duplicateCount+' кандидата с подобно име':''}</p>
   {duplicateCount>1&&<div className="notice warn">

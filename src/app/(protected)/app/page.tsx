@@ -12,7 +12,7 @@ export default async function Dashboard(){const c=await getContext();if(!c.tenan
  const pendingCount=pending?.count||0;
  const tables=['companies','employees','worksites','risk_assessments'] as const;
  const numbers=await Promise.all(tables.map(async t=>{const q=c.supabase.from(t).select('id',{head:true,count:'exact'}).eq('tenant_id',c.tenant!); if(t==='employees')q.neq('current_status','archived'); if(t==='companies')q.neq('status','archived');const result=await q;return result.count??0}));
- return <div className="content"><div className="page-header"><div><p className="eyebrow">ПРЕГЛЕД НА ДЕЙНОСТТА</p><h1>Работно табло</h1><p>Обобщение на информацията, достъпна за вашата роля.</p></div><div className="tag">Работна версия · v0.18</div></div><div className="dashboard-overviews"><PendingCompanyCandidates compact/><ArchivedPersonnelPeek compact/>
+ return <div className="content"><div className="page-header"><div><p className="eyebrow">ПРЕГЛЕД НА ДЕЙНОСТТА</p><h1>Работно табло</h1><p>Обобщение на информацията, достъпна за вашата роля.</p></div><div className="tag">Работна версия · v0.20</div></div><div className="dashboard-overviews"><PendingCompanyCandidates compact/><ArchivedPersonnelPeek compact/>
  {c.role==='admin'&&<section className="overview-card"><div className="overview-head">
   <div className="overview-copy"><p className="overview-eyebrow">MEGA · ШИФРОВАН ФАЙЛОВ КАТАЛОГ</p>
    <h2>Архивни документи <span className="overview-count">{megaStats?.error?'—':megaCount.toLocaleString('bg-BG')}</span></h2>
