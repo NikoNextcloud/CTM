@@ -73,7 +73,7 @@ export default async function CompanyCandidatePage({searchParams}:Props){
     Всички предложения изискват потвърждаване на официалния ЕИК и юридическото лице.
     Сходни имена, променени правни форми и архивни папки не се приемат автоматично за едно дружество.</p>
   </div>
-  <div className="table-panel"><div className="section-heading"><div><h2>Публично проучване на всички 91 кандидата</h2><p>Източници, ЕИК, дубликати и разминавания по всяка фирма.</p></div><Link className="btn primary" href="/app/migration/checks">Всички фирмени проверки →</Link></div></div><CompanyCandidateImport/>
+  <div className="table-panel"><div className="section-heading"><div><h2>Публично проучване на всички 91 кандидата</h2><p>Източници, ЕИК, дубликати и разминавания по всяка фирма.</p></div><Link className="btn primary" href="/app/migration/checks">Всички фирмени проверки →</Link></div></div><p><Link className="btn ghost" href="/app/migration/doc-eik">Документни ЕИК предложения с доказателства →</Link></p><CompanyCandidateImport/>
 
   <section className="table-panel transfer-panel">
    <form className="searchbar" method="get">

@@ -53,7 +53,7 @@ export default async function FirmChecks({searchParams}:Props){
     <div className="metric"><span>Без ЕИК</span><strong>{total.no_eik||0}</strong></div>
     <div className="metric"><span>Име и ЕИК в държавен документ</span><strong>{total.government_eik_corroborated||0}</strong></div>
    </section>
-   <div className="notice warn">Съвпадение по име и ЕИК в публичен справочник <strong>не е равнозначно на актуална справка</strong> в Търговския регистър. Договор със СТМ или принадлежност на служители трябва да се удостоверяват отделно.</div>
+   <p><Link className="btn primary" href="/app/migration/doc-eik">ЕИК от архивните документи →</Link></p><div className="notice warn">Съвпадение по име и ЕИК в публичен справочник <strong>не е равнозначно на актуална справка</strong> в Търговския регистър. Договор със СТМ или принадлежност на служители трябва да се удостоверяват отделно.</div>
    <section className="table-panel"><h2>Източници и несъответствия · {filtered.length} резултата</h2>
     <form className="searchbar" method="get">
      <input aria-label="Фирма или ЕИК" type="search" name="q" maxLength={80} placeholder="Име или ЕИК…" defaultValue={p.q||''}/>
