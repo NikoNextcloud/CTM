@@ -8,8 +8,8 @@ type Props={searchParams:Promise<{page?:string}>};
 type PersonRow={id:string;source:string;row:number;label:string;secondary:string};
 type PageData={total:number;rows:PersonRow[];kind:string};
 type Match={archive_id:string;match_status:string;candidate_count:number};
-type Evidence={archive_employee_rows:number;ambiguous:number;needs_company_review:number;linked_to_main:number;firm_document_folder_suggestions:number};
-const statusLabel:Record<string,string>={ambiguous_company:'Два или повече кандидата',unmatched_company:'Липсва фирма',needs_company_review:'Провери ЕИК',verified_company_requires_person_review:'Провери служителя'};
+type Evidence={archive_employee_rows:number;ambiguous:number;needs_company_review:number;linked_to_main:number;firm_document_folder_suggestions:number;needs_person_review:number;invalid_egn:number;missing_egn:number;needs_secondary_document:number;linked_pending_verified_evidence:number};
+const statusLabel:Record<string,string>={ambiguous_company:'Два или повече кандидата',unmatched_company:'Липсва фирма',needs_company_review:'Провери ЕИК',verified_company_requires_person_review:'Провери служителя',linked_pending:'Свързан · чака потвърждение',secondary_document_missing:'Нужен втори документ',invalid_egn:'Невалидно ЕГН',missing_egn:'Липсва ЕГН'};
 
 export default async function ArchivePersonnelPage({searchParams}:Props){
  const ctx=await getContext();
@@ -54,11 +54,11 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
     <Link className="btn ghost" href="/app/migration/companies">Провери фирмите →</Link></div>
     <div className="metrics">
      <div className="metric"><span>Архивни служители</span><strong>{evidence.archive_employee_rows||0}</strong></div>
-     <div className="metric"><span>Нееднозначни фирми</span><strong>{evidence.ambiguous||0}</strong></div>
-     <div className="metric"><span>Чакат проверка на ЕИК</span><strong>{evidence.needs_company_review||0}</strong></div>
-     <div className="metric"><span>Свързани с регистъра</span><strong>{evidence.linked_to_main||0}</strong></div>
+     <div className="metric"><span>Свързани по втори документ</span><strong>{evidence.linked_pending_verified_evidence||0}</strong></div>
+     <div className="metric"><span>Нуждаят се от доказателства</span><strong>{evidence.needs_person_review||0}</strong></div>
+     <div className="metric"><span>В регистъра · чакащи</span><strong>{evidence.linked_to_main||0}</strong></div>
     </div>
-    <p className="subnote">{evidence.firm_document_folder_suggestions||0} предложения за свързване на фирмени папки с архивни кандидати; всяко изисква проверка.</p>
+    <p className="subnote">Остават за удостоверяване: {evidence.needs_secondary_document||0} без втори документ, {evidence.invalid_egn||0} с невалидно ЕГН, {evidence.missing_egn||0} без ЕГН. Медицинските заключения остават архивни. Неактивен работодател не означава действащ договор.</p>
    </section>}
   <ArchivePersonnelImporter/>
   <details className="add-panel"><summary>EMS-STM · импортирай 1013 аналитични кандидата за лица</summary>
@@ -79,7 +79,7 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
      <tbody>{rows.map(person=><tr key={person.id}>
       <td>{person.label}</td><td>{person.secondary||'Няма доказана фирма'}</td>
       <td><span className="tag">{statusLabel[matchById.get(person.id)?.match_status||'']||'За проверка'}</span>
-       <small className="ctm-archive-subline">{matchById.get(person.id)?.candidate_count||0} кандидата по точно име</small>
+       <small className="ctm-archive-subline">{matchById.get(person.id)?.match_status==='linked_pending'?'Име и ЕГН съвпадат във втори документ · статус „чака потвърждение“':'Нужно е допълнително удостоверяване · архивът е запазен'}</small>
        {person.secondary&&<Link className="company-link" href={'/app/migration/companies?q='+encodeURIComponent(person.secondary)}>Провери фирмата →</Link>}</td>
       <td>{person.source.slice(0,18)}…</td>
       <td><Link className="company-link" href={'/app/migration/archive/'+person.id}>Преглед</Link> · <Link className="btn ghost" href={'/app/migration/archive/'+person.id+'#archive-edit'}>✎ Редактирай</Link></td>
@@ -94,3 +94,4 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
   </section>
  </div>;
 }
+
