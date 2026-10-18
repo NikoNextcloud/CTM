@@ -20,7 +20,7 @@ export default async function MegaPage({searchParams}:Props){
  const href=(p:number)=>'/app/migration/mega?'+new URLSearchParams({q:sp.q||'',page:String(p)}).toString();
  return <div className="content"><div className="page-header"><div>
   <Link className="back" href="/app/migration">← Миграция</Link><p className="eyebrow">ЗАЩИТЕН ДОКУМЕНТЕН КАТАЛОГ</p>
-  <h1>MEGA архив</h1><p>Оригиналните файлове се пазят в MEGA. Имената и пътищата са шифровани в Supabase.</p>
+  <h1>MEGA архив</h1><p>Оригиналите са в MEGA; защитени проверени копия се записват отделно в частния Storage.</p><p><Link className="btn ghost" href="/app/migration/report">Миграционен отчет →</Link></p>
  </div><span className="tag">Само администратор</span></div>
  {statsRes.error||rootRes.error?<div className="notice warn" role="alert">Каталогът не може да бъде прочетен.</div>:<>
  <div className="metrics">

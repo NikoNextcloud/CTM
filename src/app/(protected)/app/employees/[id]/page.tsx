@@ -19,6 +19,10 @@ export default async function EmployeeDetail({params}:Props){
  const canClinical=['admin','doctor'].includes(ctx.role);
  const clinical=canClinical?await ctx.supabase.rpc('ctm_read_employee_clinical',{p_employee_id:id}):null;
  const clinicalRecord=clinical?.data as ClinicalRecord|null;
+ const sourceEvidence=ctx.role==='admin'
+   ?await ctx.supabase.rpc('ctm_employee_archive_sources',{p_employee_id:id}):null;
+ type SourceRecord={mega_handle:string;source_type:string;storage_verified:boolean;medical_import_state:string;document_row_no:number|null};
+ const originals=Array.isArray(sourceEvidence?.data)?sourceEvidence.data as SourceRecord[]:[];
  return <div className="content">
   <Link href="/app/employees" className="back">← Служители</Link>
   <div className="page-header"><div><p className="eyebrow">СЛУЖЕБЕН РЕГИСТЪР · ДОСИЕ НА СЛУЖИТЕЛ</p>
@@ -29,6 +33,19 @@ export default async function EmployeeDetail({params}:Props){
   {canEdit&&<EditEmployeePanel key={data.revision} employee={data}/>}
   {canClinical&&(clinical?.error?<div className="notice warn" role="alert">Поверителните полета не могат да се заредят. Провери конфигурацията и достъпа до базата.</div>
    :<EmployeeClinicalPanel employeeId={id} record={clinicalRecord||{revision:0}}/>)}
+  {ctx.role==='admin'&&<section className="table-panel">
+   <h2>Документни източници от архива</h2>
+   <p>Тези оригинали удостоверяват исторически запис. Не означават действащ трудов договор или актуално медицинско заключение.</p>
+   {sourceEvidence?.error?<div className="notice warn" role="alert">Неуспешно зареждане на архивните доказателства.</div>:
+    originals.length===0?<p className="subnote">Няма документно потвърдена връзка за това досие.</p>:
+    <div className="table-wrap"><table><thead><tr><th>Проверен оригинал</th><th>Статус</th><th>Действие</th></tr></thead>
+     <tbody>{originals.map((s,i)=><tr key={s.mega_handle+i}>
+      <td>{s.source_type==='full_document_egn_and_full_name'?'Архивен списък на персонала':'Excel в архивен ZIP'}
+       <small className="ctm-archive-subline">Ред от доказателството: {s.document_row_no||'—'} · Статус: само архив</small></td>
+      <td>{s.storage_verified?'Частно копие с проверен SHA-256':'Оригинал в MEGA'}</td>
+      <td><a className="btn ghost" href={'/api/mega/file/'+s.mega_handle}>Изтегли оригинал ↓</a></td>
+     </tr>)}</tbody></table></div>}
+  </section>}
   {ctx.role==='admin'&&<EmployeeLifecycleControls key={data.revision} id={data.id} revision={data.revision} status={data.current_status}/>}
  </div>;
 }

@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const f=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const sql=f('supabase/migrations/20261018031450_v023_secure_originals_zip_reconciliation.sql');
+const copy=f('src/lib/mega-originals.ts');
+const actions=f('src/app/(protected)/app/migration/actions.ts');
+const report=f('src/app/(protected)/app/migration/report/page.tsx');
+const people=f('src/app/(protected)/app/migration/personnel/page.tsx');
+const dossier=f('src/app/(protected)/app/employees/[id]/page.tsx');
+const folder=f('src/app/(protected)/app/migration/mega/[handle]/page.tsx');
+for(const g of ['ctm_original_copy_log','ctm_admin_confirm_original','ctm_admin_add_zip_sheet','ctm_mega_embedded_xlsx','ENABLE ROW LEVEL SECURITY','REVOKE ALL','ctm_zip_exact_matches','ctm_archive_completion_summary','ctm_employee_archive_sources',"role='admin'",'storage.objects','sha256_upload_download_roundtrip'])assert.ok(sql.includes(g),'Missing security rule '+g);
+assert.match(copy,/ctx\.role!=='admin'/);
+assert.match(copy,/createHash\('sha256'\)/);
+assert.match(copy,/upsert:false/);
+assert.match(copy,/verified\.length!==bytes\.length\|\|sha\(verified\)!==digest/);
+assert.match(actions,/requireArchiveAdmin/);
+assert.match(actions,/p_parent_sha:source\.sha256/);
+assert.match(actions,/ctm_admin_add_zip_sheet/);
+assert.doesNotMatch(actions,/ctm_promote_archived_employee/);
+assert.match(report,/ctm_archive_completion_summary/);
+assert.match(report,/Частично завършена/);
+assert.match(people,/examineZipArchiveAction/);
+assert.match(folder,/saveMegaOriginalAction/);
+assert.match(dossier,/ctm_employee_archive_sources/);
+assert.doesNotMatch(sql+copy+actions,/xAtx_INwUWvR08TwiA6yAw|SUPABASE_SERVICE_ROLE_KEY\s*=/);
+console.log('CTM v0.23 protected originals and evidence-only reconciliation: PASS');
+
