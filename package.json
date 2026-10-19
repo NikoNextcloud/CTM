@@ -1,13 +1,13 @@
 {
   "name": "ctm-2-0",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test:static": "node tests/static.mjs && node tests/team-security.mjs && node tests/risk-security.mjs && node tests/structure-security.mjs && node tests/v05-security.mjs && node tests/v06-security.mjs && node tests/transfer-security.mjs && node --experimental-strip-types tests/csv-import.test.mjs && node tests/v08-security.mjs && node --import tsx tests/workbook-mapping.test.ts && node tests/register-actions-security.mjs && node tests/candidate-reconciliation-security.mjs && node tests/company-staging-security.mjs && node tests/visible-staging.test.mjs && node tests/clinical-security.mjs && node --import tsx tests/archive-workbook.test.ts && node tests/archived-personnel-security.mjs && node tests/v016-security.mjs && node tests/v017-archive-and-firm-security.mjs && node tests/v018-mega-security.mjs && node --import tsx tests/ems-person-workbook.test.ts && node tests/v020-reconciliation.mjs && node tests/v021-evidence-security.mjs && node tests/v022-eik-review.mjs && node tests/v023-protected-migration.mjs"
+    "test:static": "node tests/static.mjs && node tests/team-security.mjs && node tests/risk-security.mjs && node tests/structure-security.mjs && node tests/v05-security.mjs && node tests/v06-security.mjs && node tests/transfer-security.mjs && node --experimental-strip-types tests/csv-import.test.mjs && node tests/v08-security.mjs && node --import tsx tests/workbook-mapping.test.ts && node tests/register-actions-security.mjs && node tests/candidate-reconciliation-security.mjs && node tests/company-staging-security.mjs && node tests/visible-staging.test.mjs && node tests/clinical-security.mjs && node --import tsx tests/archive-workbook.test.ts && node tests/archived-personnel-security.mjs && node tests/v016-security.mjs && node tests/v017-archive-and-firm-security.mjs && node --import tsx tests/ems-person-workbook.test.ts && node tests/v020-reconciliation.mjs && node tests/v021-evidence-security.mjs && node tests/v022-eik-review.mjs && node tests/v024-mega-removal.mjs"
   },
   "dependencies": {
     "next": "16.4.2",
@@ -18,7 +18,6 @@
     "lucide-react": "0.468.0",
     "zod": "4.6.7",
     "read-excel-file": "9.3.12",
-    "megajs": "1.3.9",
     "fflate": "0.8.2"
   },
   "devDependencies": {

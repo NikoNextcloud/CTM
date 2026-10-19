@@ -30,7 +30,7 @@ export async function PendingCompanyCandidates({compact=false}:{compact?:boolean
     <td><Link className="company-link"
      href={'/app/migration/companies?q='+encodeURIComponent(row.name)}>
      {row.name} →</Link></td>
-    <td>{row.source_kind==='mega_root'?'MEGA':row.source_kind==='ems_xlsx'?'EMS-STM':'Excel'}</td>
+    <td>{row.source_kind==='ems_xlsx'?'EMS-STM':'Архив'}</td>
     <td>За проверка</td>
    </tr>)}</tbody>
   </table></div>

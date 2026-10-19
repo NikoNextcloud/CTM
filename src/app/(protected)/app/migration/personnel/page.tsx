@@ -2,14 +2,12 @@ import Link from 'next/link';
 import {getContext} from '@/lib/session';
 import {ArchivePersonnelImporter} from '@/components/archive-personnel-importer';
 import {EmsPersonCandidateImporter} from '@/components/ems-person-candidate-importer';
-import {examineZipArchiveAction} from '@/app/(protected)/app/migration/actions';
 
 export const dynamic='force-dynamic';
-type Props={searchParams:Promise<{page?:string;zip?:string}>};
+type Props={searchParams:Promise<{page?:string}>};
 type PersonRow={id:string;source:string;row:number;label:string;secondary:string};
 type PageData={total:number;rows:PersonRow[];kind:string};
 type Match={archive_id:string;match_status:string;candidate_count:number};
-type Completion={source_xlsx_in_zip:number;potential_zip_matches:number;unresolved:number;stored_files:number};
 type Evidence={archive_employee_rows:number;ambiguous:number;needs_company_review:number;linked_to_main:number;firm_document_folder_suggestions:number;needs_person_review:number;invalid_egn:number;missing_egn:number;needs_secondary_document:number;linked_pending_verified_evidence:number};
 const statusLabel:Record<string,string>={ambiguous_company:'Два или повече кандидата',unmatched_company:'Липсва фирма',needs_company_review:'Провери ЕИК',verified_company_requires_person_review:'Провери служителя',linked_pending:'Свързан · чака потвърждение',secondary_document_missing:'Нужен втори документ',invalid_egn:'Невалидно ЕГН',missing_egn:'Липсва ЕГН'};
 
@@ -21,19 +19,17 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
  const sp=await searchParams;
  const page=Math.max(1,Math.min(10000,Math.floor(Number(sp.page)||1)));
  const limit=25;
- const [listResult,statsResult,reviewResult,matchesResult,completionResult]=await Promise.all([
+ const [listResult,statsResult,reviewResult,matchesResult]=await Promise.all([
   ctx.supabase.rpc('ctm_archive_list',{p_kind:'employee_sample',p_limit:limit,p_offset:(page-1)*limit}),
   ctx.supabase.rpc('ctm_archive_stats'),
   ctx.supabase.rpc('ctm_migration_evidence_summary'),
-  ctx.supabase.rpc('ctm_migration_employee_match_list'),
-  ctx.supabase.rpc('ctm_archive_completion_summary')
+  ctx.supabase.rpc('ctm_migration_employee_match_list')
  ]);
  const list=(listResult.data||{total:0,rows:[],kind:'employee_sample'}) as PageData;
  const rows=Array.isArray(list.rows)?list.rows:[];
  const stats=(statsResult.data||{}) as Record<string,number>;
  const evidence=(reviewResult.data||{}) as Evidence;
  const matches=Array.isArray(matchesResult.data)?matchesResult.data as Match[]:[];
- const completion=(completionResult.data||{}) as Completion;
  const matchById=new Map(matches.map(x=>[x.archive_id,x]));
  return <div className="content">
   <div className="page-header">
@@ -64,26 +60,6 @@ export default async function ArchivePersonnelPage({searchParams}:Props){
     </div>
     <p className="subnote">Остават за удостоверяване: {evidence.needs_secondary_document||0} без втори документ, {evidence.invalid_egn||0} с невалидно ЕГН, {evidence.missing_egn||0} без ЕГН. Медицинските заключения остават архивни. Неактивен работодател не означава действащ договор.</p>
    </section>}
-  {sp.zip==='checked'&&<div className="notice" role="status">ZIP списъкът е записан шифрован за документна проверка. Прегледай доказателствата и нерешените случаи.</div>}
-  {sp.zip?.startsWith('error-')&&<div className="notice warn" role="alert">ZIP проверката не беше завършена. Оригиналните архиви са непроменени; провери квотата и сървърните настройки.</div>}
-  <section className="table-panel">
-   <div className="section-heading"><div><h2>Допълнителни оригинални ZIP списъци</h2>
-    <p>Три архивни източника могат да бъдат прегледани за останалите служители. Съдържанието се записва шифровано и не се приема за текущо медицинско заключение.</p>
-   </div><Link className="btn ghost" href="/app/migration/report">Пълен отчет →</Link></div>
-   {completionResult.error?<div className="notice warn">Не може да се изчислят ZIP съвпаденията.</div>:
-   <div className="metrics">
-    <div className="metric"><span>Защитено внесени ZIP таблици</span><strong>{completion.source_xlsx_in_zip||0}</strong></div>
-    <div className="metric"><span>Допълнителни документни съвпадения</span><strong>{completion.potential_zip_matches||0}</strong></div>
-    <div className="metric"><span>Остават за изясняване</span><strong>{completion.unresolved||0}</strong></div>
-   </div>}
-   <div className="ctm-archive-file-actions">
-    {(['XmZBGD4B','SmYCjbrb','jnBVTBLQ'] as const).map((h,i)=><form action={examineZipArchiveAction} key={h}>
-     <input type="hidden" name="handle" value={h}/>
-     <button className="btn ghost" type="submit">Провери архивен ZIP {i+1}</button>
-    </form>)}
-   </div>
-   <p className="subnote">Първо се съхранява оригиналът в частен Storage с проверен SHA-256. Едва след това Excel редовете се поставят в шифрован архив. За евентуално ново свързване се изисква допълнително административно потвърждение; не се създава активно трудово правоотношение.</p>
-  </section>
   <ArchivePersonnelImporter/>
   <details className="add-panel"><summary>EMS-STM · импортирай 1013 аналитични кандидата за лица</summary>
    <EmsPersonCandidateImporter/>

@@ -108,7 +108,7 @@ export default async function EikEvidencePage({searchParams}:Props){
        </>}
       </td>
       <td><div className="ctm-eik-actions">
-       {isRoot(item.source_root)&&<Link className="btn ghost" href={'/app/migration/mega/'+item.source_root}>Архивни документи →</Link>}
+       {isRoot(item.source_root)&&<Link className="btn ghost" href={'/app/migration/companies?status=all&q='+encodeURIComponent(item.name)}>Архивен кандидат →</Link>}
        <Link className="btn ghost" href={'/app/migration/companies?status=all&q='+encodeURIComponent(item.name)}>Кандидат →</Link>
       </div></td>
      </tr>)}
